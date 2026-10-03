@@ -1,0 +1,58 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono&family=DM+Serif+Display:ital@0;1&family=Noto+Serif+Devanagari:wght@400;500&display=swap');
+
+:root {
+  --bg: #0b100f;
+  --paper: #d5c7ad;
+  --ink: #0b100f;
+  --soft: #9c9c90;
+  --line: rgba(213, 199, 173, 0.2);
+  --circle-r: clamp(245px, max(33.5svh, 19vw), 330px);
+  font-family: "DM Serif Display", Georgia, serif;
+  color: var(--paper);
+  background: var(--bg);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: #0b100f;
+  color: var(--paper);
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  color: inherit;
+  cursor: pointer;
+}
+
+@media (max-width: 860px) {
+  :root {
+    --circle-r: clamp(180px, 26vw, 220px);
+  }
+}
+
+@media (max-width: 640px) {
+  :root {
+    --circle-r: clamp(142px, 39vw, 168px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  html {
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
+}
