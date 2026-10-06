@@ -1,0 +1,187 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body, #root {
+    width: 100%;
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background-color: #071113;
+    color: #e6dfd1;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    min-height: 100vh;
+    background-image: url('/images/Screenshot 2026-10-04 at 4.45.34 PM.png');
+    background-position: center;
+    background-size: cover;
+    background-attachment: fixed;
+  }
+
+  #root {
+    min-height: 100vh;
+    background: transparent;
+  }
+
+  /* Custom antique gold scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #091719;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #573b2b;
+    border-radius: 4px;
+    border: 1px solid #93613f;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #ae7549;
+  }
+}
+
+@layer components {
+  .touch-target {
+    min-width: 44px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .admin-button {
+    border: 1px solid #e5bd78;
+    background: #e5bd78;
+    color: #071113;
+    font-weight: 700;
+    transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
+  }
+
+  .admin-button:hover:not(:disabled) {
+    border-color: #f0d28e;
+    background: #f0d28e;
+    color: #071113;
+  }
+
+  .admin-button:disabled {
+    opacity: 0.42;
+    cursor: not-allowed;
+  }
+
+  .admin-album-button {
+    border: 1px solid #e5bd78;
+    background: #e5bd78;
+    color: #071113;
+    font-weight: 600;
+    transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
+  }
+
+  .admin-album-button:hover {
+    border-color: #f0d28e;
+    background: #f0d28e;
+    color: #071113;
+  }
+
+  .admin-album-button[aria-pressed="true"] {
+    border-color: #f0d28e;
+    color: #071113;
+    background: #f0d28e;
+  }
+
+  .admin-upload-picker {
+    border: 1px solid #f0d28e;
+    background: #e5bd78;
+    color: #071113;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.25);
+    transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease;
+  }
+
+  .admin-upload-picker:hover {
+    border-color: #f5dda7;
+    background: #f0d28e;
+  }
+
+  .admin-upload-picker:focus-within {
+    outline: 3px solid rgba(240, 210, 142, 0.55);
+    outline-offset: 3px;
+  }
+}
+
+@layer utilities {
+  .preserve-3d {
+    transform-style: preserve-3d;
+    -webkit-transform-style: preserve-3d;
+  }
+
+  .backface-hidden {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+
+  .gold-shimmer {
+    background: linear-gradient(135deg, #87542f 0%, #d5aa78 50%, #a66b3f 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .text-glow {
+    text-shadow: 0 0 15px rgba(166, 107, 63, 0.4);
+  }
+
+  .shadow-gold-intense {
+    box-shadow: 0 0 35px 4px rgba(166, 107, 63, 0.46);
+  }
+}
+
+/* Animations */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 75s linear infinite;
+}
+
+@keyframes parallax-gallery-scroll {
+  to {
+    transform: translate3d(0, -50%, 0);
+  }
+}
+
+.parallax-track {
+  display: flex;
+  flex-direction: column;
+  animation: parallax-gallery-scroll var(--track-duration, 70s) linear infinite;
+  animation-delay: var(--track-delay, 0s);
+  will-change: transform;
+}
+
+.parallax-photo-stack {
+  flex: 0 0 auto;
+}
+
+.parallax-track.is-paused,
+.parallax-column.is-hovered .parallax-track {
+  animation-play-state: paused;
+}
+
+.parallax-column-reverse .parallax-track {
+  animation-direction: reverse;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .parallax-track {
+    animation-duration: 180s !important;
+  }
+}
