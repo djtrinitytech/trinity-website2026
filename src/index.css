@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Mono&family=DM+Serif+Display:ital@0;1&family=Noto+Serif+Devanagari:wght@400;500&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=DM+Serif+Display:ital@0;1&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Noto+Serif+Devanagari:wght@400;500&display=swap");
 
 :root {
   --bg: #0b100f;
@@ -6,7 +6,8 @@
   --ink: #0b100f;
   --soft: #9c9c90;
   --line: rgba(213, 199, 173, 0.2);
-  --circle-r: clamp(245px, max(33.5svh, 19vw), 330px);
+  --circle-r: clamp(285px, 35svh, 360px);
+  --font-serif: "DM Serif Display", Georgia, serif;
   font-family: "DM Serif Display", Georgia, serif;
   color: var(--paper);
   background: var(--bg);
@@ -16,6 +17,13 @@
   box-sizing: border-box;
 }
 
+html,
+body,
+#root {
+  font-family: "DM Serif Display", Georgia, serif;
+  color: var(--paper);
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -23,13 +31,14 @@ html {
 body {
   margin: 0;
   background: #0b100f;
-  color: var(--paper);
 }
 
 button,
 input,
-select {
-  font: inherit;
+select,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
 }
 
 button {
@@ -45,7 +54,7 @@ button {
 
 @media (max-width: 640px) {
   :root {
-    --circle-r: clamp(142px, 39vw, 168px);
+    --circle-r: clamp(152px, 41vw, 180px);
   }
 }
 

@@ -1,0 +1,163 @@
+/* Admin Gallery Grid & Cards */
+.adm-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.adm-gallery-card {
+  background: var(--adm-bg-card);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--adm-border);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.adm-gallery-card:hover {
+  border-color: var(--adm-border-active);
+  transform: translateY(-2px);
+}
+
+.adm-gallery-thumb-box {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: #040807;
+  overflow: hidden;
+}
+
+.adm-gallery-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.adm-gallery-thumb-box.img-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(14, 22, 20, 0.9);
+}
+
+.adm-gallery-thumb-box.img-fallback::before {
+  content: "🖼️ Image unavailable";
+  font-family: "DM Mono", monospace;
+  font-size: 11px;
+  color: var(--adm-muted);
+}
+
+.adm-order-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: rgba(7, 12, 11, 0.85);
+  border: 1px solid var(--adm-border);
+  color: var(--adm-gold);
+  font-family: "DM Mono", monospace;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.adm-thumb-badges {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.adm-gallery-content {
+  padding: 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.adm-gallery-title {
+  font-family: "DM Serif Display", Georgia, serif;
+  font-size: 15.5px;
+  color: var(--adm-text-bright);
+  margin: 0 0 4px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.adm-gallery-event {
+  font-family: "DM Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--adm-gold);
+  text-transform: uppercase;
+  margin: 0 0 8px;
+}
+
+.adm-gallery-desc {
+  font-size: 12px;
+  color: var(--adm-muted);
+  line-height: 1.45;
+  margin: 0 0 14px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.adm-reorder-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
+  border: 1px solid rgba(214, 175, 102, 0.08);
+  margin-top: auto;
+  margin-bottom: 12px;
+}
+
+.adm-order-btn {
+  background: rgba(14, 22, 20, 0.8);
+  border: 1px solid var(--adm-border);
+  color: var(--adm-gold);
+  width: 26px;
+  height: 24px;
+  border-radius: 3px;
+  font-size: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.adm-order-btn:hover:not(:disabled) {
+  background: var(--adm-gold);
+  color: #070c0b;
+}
+
+.adm-order-btn:disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
+}
+
+.adm-gallery-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr auto;
+  gap: 6px;
+}
+
+@media (max-width: 600px) {
+  .adm-gallery-grid {
+    grid-template-columns: 1fr;
+  }
+}

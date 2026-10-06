@@ -3,16 +3,18 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #080d12 url('./assets/bg.png') center top / cover no-repeat fixed;
+  background: #080d12 url('./assets/homepage/bg.png') center center / cover no-repeat fixed;
   color: #f3f4f6;
   position: relative;
+  overflow-x: clip;
+  font-family: "DM Serif Display", Georgia, serif;
 }
 
 .app-root::before {
   content: '';
   position: fixed;
   inset: 0;
-  background: radial-gradient(circle at 50% 35%, rgba(220, 157, 74, 0.03) 0%, rgba(5, 10, 18, 0.6) 60%, rgba(5, 10, 18, 0.88) 100%);
+  background: radial-gradient(circle at 50% 35%, rgba(220, 157, 74, 0.02) 0%, rgba(5, 10, 18, 0.2) 50%, rgba(5, 10, 18, 0.45) 100%);
   pointer-events: none;
   z-index: 0;
 }
@@ -106,7 +108,8 @@
 /* ---------------- Home Hero & Artifact Orbit ---------------- */
 .homepage {
   position: relative;
-  overflow: hidden;
+  overflow-x: clip;
+  overflow-y: visible;
   width: 100%;
 }
 
@@ -118,8 +121,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #0b100f url('./assets/bg.png') center center / cover no-repeat;
-  overflow: hidden;
+  background: transparent;
+  overflow: visible;
 }
 
 .hero-meta {
@@ -156,7 +159,7 @@
 /* Central Title - Concentric at (50%, 50%) */
 .center-title {
   position: absolute;
-  top: 50%;
+  top: calc(50% - 5px);
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 4;
@@ -262,7 +265,7 @@
 
 .artifacts-orbit {
   position: absolute;
-  top: 50%;
+  top: calc(50% - 42px);
   left: 50%;
   width: 0;
   height: 0;
@@ -319,8 +322,8 @@
 }
 
 .artifact-img {
-  width: clamp(74px, 6.5vw, 98px);
-  height: clamp(74px, 6.5vw, 98px);
+  width: clamp(96px, 8vw, 126px);
+  height: clamp(96px, 8vw, 126px);
   object-fit: contain;
   display: block;
   pointer-events: none;
@@ -334,13 +337,13 @@
 }
 
 .artifact-label {
-  font-size: clamp(12px, 1.15vw, 14px);
+  font-size: clamp(12.5px, 1.05vw, 14px);
   font-family: "DM Serif Display", Georgia, serif;
   letter-spacing: 0.04em;
   color: #dfd4bf;
   text-shadow: 0 2px 6px rgba(0, 0, 0, 0.95), 0 0 4px rgba(0, 0, 0, 0.8);
   pointer-events: none;
-  margin-top: -12px;
+  margin-top: -6px;
   position: relative;
   z-index: 2;
   transition: color 0.25s ease, text-shadow 0.25s ease;
@@ -484,7 +487,7 @@
   padding: 110px 24px 130px;
   position: relative;
   overflow: hidden;
-  background: radial-gradient(ellipse at center, #1b211d, #0b100f 70%);
+  background: transparent;
 }
 
 .continuation-art {
@@ -515,7 +518,7 @@
   overflow: hidden;
   background-color: #0b100f;
   background-image: linear-gradient(180deg, rgba(11, 16, 15, 0.72) 0%, rgba(11, 16, 15, 0.42) 25%, rgba(11, 16, 15, 0.68) 70%, #0b100f 100%),
-    url('./assets/bg.png');
+    url('./assets/homepage/bg.png');
   background-position: center top;
   background-size: cover;
   background-repeat: no-repeat;
@@ -866,8 +869,53 @@
   background: linear-gradient(135deg, rgba(14, 40, 44, 0.3), rgba(56, 102, 94, 0.22));
 }
 
-.notice-art.textile {
-  background: linear-gradient(135deg, rgba(68, 45, 67, 0.28), transparent 70%);
+/* Announcement Card Banner Background (When assigned via Admin CMS) */
+.notice.has-image {
+  background: #080c0b;
+}
+
+.notice-banner-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.notice-banner-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.notice:hover .notice-banner-img {
+  transform: scale(1.05);
+}
+
+.notice-banner-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.notice.big .notice-banner-overlay {
+  background: linear-gradient(
+    90deg,
+    rgba(8, 12, 11, 0.94) 0%,
+    rgba(8, 12, 11, 0.82) 48%,
+    rgba(8, 12, 11, 0.35) 85%,
+    rgba(8, 12, 11, 0.2) 100%
+  );
+}
+
+.notice:not(.big) .notice-banner-overlay {
+  background: linear-gradient(
+    0deg,
+    rgba(8, 12, 11, 0.96) 0%,
+    rgba(8, 12, 11, 0.82) 55%,
+    rgba(8, 12, 11, 0.3) 100%
+  );
 }
 
 .empty {
@@ -915,6 +963,25 @@
   font-size: 28px;
   cursor: pointer;
   line-height: 1;
+  z-index: 5;
+}
+
+.modal-banner-wrap {
+  width: 100%;
+  height: 200px;
+  max-height: 220px;
+  overflow: hidden;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(214, 175, 102, 0.3);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+}
+
+.modal-banner-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .modal .kicker {
@@ -948,9 +1015,14 @@
 
 /* ---------------- Responsive Styles (Tablets & Mobile) ---------------- */
 @media (max-width: 960px) {
+  .app-root {
+    background-position: center center;
+  }
+
   .hero {
-    min-height: max(620px, calc(100svh - 64px));
+    min-height: max(580px, calc(100svh - 64px));
     height: calc(100svh - 64px);
+    max-height: 840px;
   }
 
   .hero-meta {
@@ -960,19 +1032,27 @@
   }
 
   .hero-count {
-    bottom: 18px;
+    bottom: clamp(28px, 4.5vh, 40px);
     right: 20px;
     font-size: 9.5px;
   }
 
+  .center-title {
+    top: calc(50svh - 44px);
+  }
+
+  .artifacts-orbit {
+    top: calc(50svh - 64px);
+  }
+
   .artifact-img {
-    width: clamp(60px, 9.5vw, 76px);
-    height: clamp(60px, 9.5vw, 76px);
+    width: clamp(70px, 11vw, 86px);
+    height: clamp(70px, 11vw, 86px);
   }
 
   .artifact-label {
-    font-size: 11px;
-    margin-top: -10px;
+    font-size: 11.5px;
+    margin-top: -8px;
   }
 
   .section-intro {
@@ -1051,6 +1131,10 @@
   .notice {
     min-height: 250px;
   }
+
+  .continuation {
+    padding: 44px 20px 70px;
+  }
 }
 
 @media (max-width: 640px) {
@@ -1061,6 +1145,7 @@
   .hero {
     min-height: max(560px, calc(100svh - 64px));
     height: calc(100svh - 64px);
+    max-height: 800px;
   }
 
   .hero-meta {
@@ -1071,16 +1156,21 @@
   }
 
   .hero-count {
-    bottom: 14px;
+    bottom: clamp(34px, 5.5vh, 48px);
     right: 16px;
     font-size: 8.5px;
     letter-spacing: 0.12em;
   }
 
-  /* Compact center title on mobile */
+  /* Compact center title on mobile - aligned with rings center and crosshair */
   .center-title {
-    max-width: 200px;
+    top: calc(50svh - 44px);
+    max-width: 210px;
     padding: 0 4px;
+  }
+
+  .artifacts-orbit {
+    top: calc(50svh - 64px);
   }
 
   .kicker {
@@ -1114,13 +1204,13 @@
 
   /* Increased artifact size on mobile */
   .artifact-img {
-    width: clamp(62px, 16.5vw, 74px);
-    height: clamp(62px, 16.5vw, 74px);
+    width: clamp(74px, 19.5vw, 92px);
+    height: clamp(74px, 19.5vw, 92px);
   }
 
   .artifact-label {
-    font-size: 11px;
-    margin-top: -8px;
+    font-size: 11.5px;
+    margin-top: -6px;
   }
 
   .announcements {
@@ -1162,5 +1252,9 @@
 
   .notice-excerpt {
     font-size: 12.5px;
+  }
+
+  .continuation {
+    padding: 24px 16px 54px;
   }
 }

@@ -1,18 +1,23 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import OrdersSection from "../components/homepage/OrdersSection";
+import GallerySectionDNA from "../components/homepage/GallerySectionDNA";
+import AboutSection from "../components/homepage/AboutSection";
+import { ordersData } from "../data/ordersData";
 
 // Artifact images from assets
-import sindhuImg from "../assets/sindhu.png";
-import aakarImg from "../assets/aakar.png";
-import pragyaImg from "../assets/pragya.png";
-import kshatraImg from "../assets/kshatra.png";
-import aarohanImg from "../assets/aarohan.png";
-import utkarshImg from "../assets/utkarsh.png";
+import sindhuImg from "../assets/homepage/sindhu.png";
+import aakarImg from "../assets/homepage/aakar.png";
+import pragyaImg from "../assets/homepage/pragya.png";
+import kshatraImg from "../assets/homepage/kshatra.png";
+import aarohanImg from "../assets/homepage/aarohan.png";
+import utkarshImg from "../assets/homepage/utkarsh.png";
 
 const orders = [
   {
     name: "Sindhu",
-    cue: "Rivers · oceans · trade",
+    artifact: "Sindhu",
+    dept: "Comps",
+    cue: "AS SINDHU",
     color: "#4b9c99",
     glyph: "≈",
     className: "sindhu",
@@ -21,7 +26,9 @@ const orders = [
   },
   {
     name: "Aakar",
-    cue: "Architecture · creation",
+    artifact: "Aakar",
+    dept: "IT",
+    cue: "AS AAKAR",
     color: "#b48b59",
     glyph: "⌂",
     className: "aakar",
@@ -30,7 +37,9 @@ const orders = [
   },
   {
     name: "Pragya",
-    cue: "Knowledge · ideas",
+    artifact: "Pragya",
+    dept: "Cseds",
+    cue: "AS PRAGYA",
     color: "#829a6c",
     glyph: "✦",
     className: "pragya",
@@ -39,7 +48,9 @@ const orders = [
   },
   {
     name: "Utkarsh",
-    cue: "Craft · prosperity",
+    artifact: "Utkarsh",
+    dept: "Allied",
+    cue: "AS UTKARSH",
     color: "#996b90",
     glyph: "▧",
     className: "utkarsh",
@@ -48,7 +59,9 @@ const orders = [
   },
   {
     name: "Aarohan",
-    cue: "Exploration · discovery",
+    artifact: "Aarohan",
+    dept: "Extc",
+    cue: "AS AAROHAN",
     color: "#5f86a6",
     glyph: "✧",
     className: "aarohan",
@@ -57,7 +70,9 @@ const orders = [
   },
   {
     name: "Kshatra",
-    cue: "Courage · protection",
+    artifact: "Kshatra",
+    dept: "Mech",
+    cue: "AS KSHATRA",
     color: "#a65e57",
     glyph: "◈",
     className: "kshatra",
@@ -66,7 +81,7 @@ const orders = [
   },
 ];
 
-function Artifact({ order, scrollToOrders, onHoverChange }) {
+function Artifact({ order, onSelectArtifact, onHoverChange }) {
   return (
     <div
       className={`artifact-slot ${order.className}`}
@@ -79,7 +94,7 @@ function Artifact({ order, scrollToOrders, onHoverChange }) {
         style={{ "--accent": order.color }}
         onClick={(e) => {
           e.currentTarget.blur();
-          scrollToOrders();
+          onSelectArtifact(order.name);
         }}
         aria-label={`Explore ${order.name}: ${order.cue}`}
       >
@@ -99,9 +114,31 @@ function Artifact({ order, scrollToOrders, onHoverChange }) {
 
 export default function Home() {
   const [isPaused, setIsPaused] = useState(false);
+  const [selectedOrderIndex, setSelectedOrderIndex] = useState(0);
+
+  const handleSelectArtifact = (orderName) => {
+    const query = orderName.toLowerCase();
+    const targetIdx = ordersData.findIndex(
+      (o) =>
+        o.name.toLowerCase() === query ||
+        o.cue.toLowerCase() === query ||
+        (o.artifact && o.artifact.toLowerCase() === query) ||
+        (o.dept && o.dept.toLowerCase() === query)
+    );
+    if (targetIdx !== -1) {
+      setSelectedOrderIndex(targetIdx);
+    }
+    const ordersEl = document.getElementById("orders");
+    if (ordersEl) {
+      ordersEl.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
 
   const scrollToOrders = () => {
-    document.getElementById("orders")?.scrollIntoView({ behavior: "smooth" });
+    const ordersEl = document.getElementById("orders");
+    if (ordersEl) {
+      ordersEl.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   };
 
   return (
@@ -141,63 +178,27 @@ export default function Home() {
             <Artifact
               key={o.name}
               order={o}
-              scrollToOrders={scrollToOrders}
+              onSelectArtifact={handleSelectArtifact}
               onHoverChange={setIsPaused}
             />
           ))}
         </div>
       </main>
 
-      <section id="orders" className="orders-section">
-        <div className="section-intro">
-          <div>
-            <p className="kicker">The six orders</p>
-            <h2>One story, told through six ways of seeing.</h2>
-          </div>
-          <p>
-            Each order holds a distinct part of civilization in motion: currents,
-            structures, ideas, courage, exploration, and craft.
-          </p>
-        </div>
+      {/* =================================================
+          DNA CAROUSEL GALLERY ARCHIVE
+      ================================================= */}
+      <GallerySectionDNA />
 
-        <div className="order-list">
-          {orders.map((o, i) => (
-            <article
-              className="order-row"
-              key={o.name}
-              style={{ "--accent": o.color }}
-            >
-              <span className="order-num">0{i + 1}</span>
-              <div className="row-glyph">{o.glyph}</div>
-              <div className="order-main-info">
-                <h3>{o.name}</h3>
-                <p>{o.cue}</p>
-              </div>
-              <p className="order-blurb">{o.blurb}</p>
-              <button
-                type="button"
-                onClick={scrollToOrders}
-                aria-label={`Learn about ${o.name}`}
-              >
-                ↗
-              </button>
-            </article>
-          ))}
-        </div>
-      </section>
+      <OrdersSection
+        selectedOrderIndex={selectedOrderIndex}
+        onSelectOrder={setSelectedOrderIndex}
+      />
 
-      <section className="continuation">
-        <div className="continuation-art">✣</div>
-        <p className="kicker">The journey continues</p>
-        <h2>
-          Past, interpreted.
-          <br />
-          Future, imagined.
-        </h2>
-        <Link to="/announcements" className="continuation-link">
-          View announcements <span className="arrow-icon">→</span>
-        </Link>
-      </section>
+      {/* =================================================
+          ABOUT US — THE FINAL CHAPTER OF THE ARCHIVE
+      ================================================= */}
+      <AboutSection />
     </div>
   );
 }

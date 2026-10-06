@@ -2,11 +2,14 @@ import React, { useState, useEffect } from "react";
 import { NavLink, Link, useLocation } from "react-router-dom";
 import { Menu, X, Sparkles } from "lucide-react";
 import logo from "../images/trinity_logo.png";
+import { useAnnouncementNotification } from "../context/AnnouncementNotificationContext";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
+  const isHome = location.pathname === "/";
+  const { unreadCount } = useAnnouncementNotification();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 25);
@@ -64,12 +67,29 @@ export default function Navbar() {
           backdrop-filter: blur(16px);
           -webkit-backdrop-filter: blur(16px);
           box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-          transition: all 0.3s ease;
+          transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease, backdrop-filter 0.35s ease;
+        }
+
+        /* Fully transparent on homepage when not scrolled */
+        .site-navbar.is-home:not(.scrolled):not(.menu-open) {
+          background: transparent;
+          border-bottom-color: transparent;
+          backdrop-filter: none;
+          -webkit-backdrop-filter: none;
+          box-shadow: none;
         }
 
         .site-navbar.scrolled {
           background: rgba(8, 12, 18, 0.88);
+          border-bottom-color: rgba(214, 175, 102, 0.2);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
           box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+        }
+
+        .site-navbar.menu-open {
+          background: rgba(8, 12, 18, 0.97);
+          border-bottom-color: rgba(214, 175, 102, 0.25);
         }
 
         .nav-grid-container {
@@ -271,9 +291,98 @@ export default function Navbar() {
             border-bottom: 0;
           }
         }
+
+        /* ---------------- Announcement Notification Ping Badge ---------------- */
+        .announcements-nav-item {
+          display: inline-flex !important;
+          align-items: center;
+          gap: 6px;
+        }
+
+        .nav-ping-badge {
+          position: relative;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          vertical-align: middle;
+          margin-left: 6px;
+          transform: translateY(-1px);
+          user-select: none;
+        }
+
+        .nav-ping-core {
+          position: relative;
+          z-index: 2;
+          min-width: 19px;
+          height: 19px;
+          padding: 0 5px;
+          border-radius: 9999px;
+          background: linear-gradient(135deg, #e14938 0%, #d87d28 50%, #c9933b 100%);
+          color: #ffffff;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+          font-size: 10.5px;
+          font-weight: 700;
+          line-height: 19px;
+          text-align: center;
+          border: 1px solid rgba(255, 235, 190, 0.7);
+          box-shadow: 0 0 10px rgba(225, 73, 56, 0.75), 0 0 16px rgba(214, 175, 102, 0.45);
+          letter-spacing: 0;
+        }
+
+        .nav-ping-ring {
+          position: absolute;
+          inset: -3px;
+          border-radius: 9999px;
+          border: 1.5px solid rgba(235, 95, 70, 0.85);
+          box-shadow: 0 0 8px rgba(235, 95, 70, 0.5);
+          pointer-events: none;
+          z-index: 1;
+          animation: navPingWave 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+        }
+
+        @keyframes navPingWave {
+          0% {
+            transform: scale(0.9);
+            opacity: 0.95;
+          }
+          60% {
+            transform: scale(1.65);
+            opacity: 0;
+          }
+          100% {
+            transform: scale(1.65);
+            opacity: 0;
+          }
+        }
+
+        /* Mobile Hamburger notification dot */
+        .mobile-hamburger-ping {
+          position: absolute;
+          top: 3px;
+          right: 3px;
+          width: 9px;
+          height: 9px;
+          border-radius: 50%;
+          background: #e14938;
+          border: 1.5px solid #080c12;
+          box-shadow: 0 0 8px #e14938;
+          animation: hamburgerPulse 1.8s ease-in-out infinite alternate;
+          pointer-events: none;
+        }
+
+        @keyframes hamburgerPulse {
+          from {
+            transform: scale(0.85);
+            box-shadow: 0 0 4px #e14938;
+          }
+          to {
+            transform: scale(1.25);
+            box-shadow: 0 0 12px #ff6955, 0 0 6px #e5b058;
+          }
+        }
       `}</style>
 
-      <header className={`site-navbar ${scrolled ? "scrolled" : ""}`}>
+      <header className={`site-navbar ${scrolled ? "scrolled" : ""} ${isHome ? "is-home" : ""} ${open ? "menu-open" : ""}`}>
         {/* DESKTOP NAVBAR: Exactly 3 Grid Columns (Left 1fr, Center Auto, Right 1fr) */}
         <div className="nav-grid-container desktop-only">
           {/* Left shortcuts - aligned to Left Edge */}
@@ -302,24 +411,47 @@ export default function Navbar() {
 
           {/* Right shortcuts - aligned to Right Edge */}
           <nav className="nav-edge-side right" aria-label="Right navigation">
-            {rightNavItems.map((item) => (
-              <NavLink
-                key={item.path}
-                to={item.path}
-                className={({ isActive }) =>
-                  `nav-link-btn ${isActive ? "active" : ""}`
-                }
-              >
-                {item.title}
-              </NavLink>
-            ))}
+            {rightNavItems.map((item) => {
+              const isAnnouncements = item.path === "/announcements";
+              return (
+                <NavLink
+                  key={item.path}
+                  to={item.path}
+                  className={({ isActive }) =>
+                    `nav-link-btn ${isActive ? "active" : ""} ${
+                      isAnnouncements ? "announcements-nav-item" : ""
+                    }`
+                  }
+                >
+                  <span>{item.title}</span>
+                  {isAnnouncements && unreadCount > 0 && (
+                    <span
+                      className="nav-ping-badge"
+                      title={`${unreadCount} new announcement${
+                        unreadCount > 1 ? "s" : ""
+                      }`}
+                      aria-label={`${unreadCount} new announcements`}
+                    >
+                      <span className="nav-ping-ring" />
+                      <span className="nav-ping-core">
+                        {unreadCount > 9 ? "9+" : unreadCount}
+                      </span>
+                    </span>
+                  )}
+                </NavLink>
+              );
+            })}
           </nav>
         </div>
 
         {/* MOBILE TOP BAR (< 980px) */}
         <div className="mobile-bar mobile-only">
           <div className="mobile-spacer" />
-          <Link to="/" className="mobile-logo-link" onClick={() => setOpen(false)}>
+          <Link
+            to="/"
+            className="mobile-logo-link"
+            onClick={() => setOpen(false)}
+          >
             <img src={logo} alt="Trinity Logo" className="mobile-logo-img" />
           </Link>
           <button
@@ -327,8 +459,12 @@ export default function Navbar() {
             onClick={() => setOpen(!open)}
             aria-label="Toggle navigation menu"
             aria-expanded={open}
+            style={{ position: "relative" }}
           >
             {open ? <X size={22} /> : <Menu size={22} />}
+            {unreadCount > 0 && !open && (
+              <span className="mobile-hamburger-ping" />
+            )}
           </button>
         </div>
       </header>
@@ -336,18 +472,44 @@ export default function Navbar() {
       {/* Mobile Drawer Overlay */}
       <div className={`nav-mobile-overlay ${open ? "open" : ""}`}>
         <div className="nav-mobile-list">
-          {allNavItems.map((item) => (
-            <NavLink
-              key={item.path}
-              to={item.path}
-              className={({ isActive }) =>
-                `nav-link-btn ${isActive ? "active" : ""}`
-              }
-              onClick={() => setOpen(false)}
-            >
-              {item.title}
-            </NavLink>
-          ))}
+          {allNavItems.map((item) => {
+            const isAnnouncements = item.path === "/announcements";
+            return (
+              <NavLink
+                key={item.path}
+                to={item.path}
+                className={({ isActive }) =>
+                  `nav-link-btn ${isActive ? "active" : ""} ${
+                    isAnnouncements ? "announcements-nav-item" : ""
+                  }`
+                }
+                onClick={() => setOpen(false)}
+                style={
+                  isAnnouncements
+                    ? {
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: 8,
+                      }
+                    : undefined
+                }
+              >
+                <span>{item.title}</span>
+                {isAnnouncements && unreadCount > 0 && (
+                  <span
+                    className="nav-ping-badge"
+                    title={`${unreadCount} new announcements`}
+                  >
+                    <span className="nav-ping-ring" />
+                    <span className="nav-ping-core">
+                      {unreadCount > 9 ? "9+" : unreadCount}
+                    </span>
+                  </span>
+                )}
+              </NavLink>
+            );
+          })}
         </div>
       </div>
     </>
