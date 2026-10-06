@@ -1,0 +1,242 @@
+{
+  "albums": [
+    {
+      "id": "57df2b01-8bc5-46bb-bcb7-9537df00b81b",
+      "title": "tester",
+      "description": "abcd",
+      "published": true,
+      "createdAt": "2026-10-05T13:26:18.089Z",
+      "photos": [
+        {
+          "id": "0221cc91-825a-46a4-9c92-8a0a9372e7a4",
+          "title": "images1",
+          "description": "",
+          "category": "Events",
+          "date": "",
+          "venue": "",
+          "photographer": "",
+          "imageUrl": "/uploads/photo-a489c80f-73bb-41ca-9d72-81a589dd38af-display.webp",
+          "originalKey": "photo-a489c80f-73bb-41ca-9d72-81a589dd38af.jpg",
+          "thumbnailUrl": "/uploads/photo-a489c80f-73bb-41ca-9d72-81a589dd38af-thumb.webp",
+          "displayUrl": "/uploads/photo-a489c80f-73bb-41ca-9d72-81a589dd38af-display.webp",
+          "largeUrl": "/uploads/photo-a489c80f-73bb-41ca-9d72-81a589dd38af-large.webp",
+          "width": 516,
+          "height": 594,
+          "aspectRatio": "516/594",
+          "createdAt": "2026-10-05T16:47:18.470Z"
+        },
+        {
+          "id": "b9d07544-2586-4e43-af0e-429ab0eb0827",
+          "title": "images2",
+          "description": "",
+          "category": "Events",
+          "date": "",
+          "venue": "",
+          "photographer": "",
+          "imageUrl": "/uploads/photo-0fa657d0-cf4e-4788-aace-096ac7da1d36-display.webp",
+          "originalKey": "photo-0fa657d0-cf4e-4788-aace-096ac7da1d36.jpg",
+          "thumbnailUrl": "/uploads/photo-0fa657d0-cf4e-4788-aace-096ac7da1d36-thumb.webp",
+          "displayUrl": "/uploads/photo-0fa657d0-cf4e-4788-aace-096ac7da1d36-display.webp",
+          "largeUrl": "/uploads/photo-0fa657d0-cf4e-4788-aace-096ac7da1d36-large.webp",
+          "width": 680,
+          "height": 451,
+          "aspectRatio": "680/451",
+          "createdAt": "2026-10-05T16:47:18.513Z"
+        },
+        {
+          "id": "ee228564-74db-4539-b460-9884abbff6b5",
+          "title": "images3",
+          "description": "",
+          "category": "Events",
+          "date": "",
+          "venue": "",
+          "photographer": "",
+          "imageUrl": "/uploads/photo-9ede68b8-209f-435d-9b10-9008ccfeaab7-display.webp",
+          "originalKey": "photo-9ede68b8-209f-435d-9b10-9008ccfeaab7.jpg",
+          "thumbnailUrl": "/uploads/photo-9ede68b8-209f-435d-9b10-9008ccfeaab7-thumb.webp",
+          "displayUrl": "/uploads/photo-9ede68b8-209f-435d-9b10-9008ccfeaab7-display.webp",
+          "largeUrl": "/uploads/photo-9ede68b8-209f-435d-9b10-9008ccfeaab7-large.webp",
+          "width": 678,
+          "height": 452,
+          "aspectRatio": "678/452",
+          "createdAt": "2026-10-05T16:47:18.562Z"
+        }
+      ]
+    },
+    {
+      "id": "album-event-photo-02",
+      "title": "Orientation Session",
+      "description": "Induction gathering for the newly inducted cohort of 2025, introducing the Six Orders and civilizational pillars.",
+      "published": true,
+      "createdAt": "1970-01-01T00:00:00.000Z",
+      "photos": [
+        {
+          "id": "event-photo-02",
+          "title": "Welcome Address to Selected Initiates",
+          "description": "Induction gathering for the newly inducted cohort of 2025, introducing the Six Orders and civilizational pillars.",
+          "category": "Orientations",
+          "date": "08 Sep 2025",
+          "venue": "Grand Mandapam Hall",
+          "photographer": "Devansh Roy",
+          "imageUrl": "https://images.unsplash.com/photo-1511578314322-379afb476865?q=80&w=1200&auto=format&fit=crop",
+          "originalImageUrl": "https://images.unsplash.com/photo-1511578314322-379afb476865?q=80&w=1200&auto=format&fit=crop",
+          "thumbnailUrl": "",
+          "displayUrl": "",
+          "largeUrl": "",
+          "aspectRatio": "4/3",
+          "createdAt": "1970-01-01T00:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "album-event-photo-03",
+      "title": "testing",
+      "description": "Final jury reviews and architectural scale displays representing historical monuments carved by student guilds.",
+      "published": true,
+      "createdAt": "1970-01-01T00:00:00.000Z",
+      "photos": [
+        {
+          "id": "event-photo-03",
+          "title": "Monolithic Scale Models on Display",
+          "description": "Final jury reviews and architectural scale displays representing historical monuments carved by student guilds.",
+          "category": "Exhibitions",
+          "date": "25 Sep 2025",
+          "venue": "Sanctum Gallery & Guild Atrium",
+          "photographer": "Kabir Sharma",
+          "imageUrl": "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?q=80&w=1200&auto=format&fit=crop",
+          "originalImageUrl": "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?q=80&w=1200&auto=format&fit=crop",
+          "thumbnailUrl": "",
+          "displayUrl": "",
+          "largeUrl": "",
+          "aspectRatio": "16/9",
+          "createdAt": "1970-01-01T00:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "album-event-photo-04",
+      "title": "Team Reveal & Investiture",
+      "description": "Unveiling of the order leads and core execution council amidst ceremonial lights and musical fanfare.",
+      "published": true,
+      "createdAt": "1970-01-01T00:00:00.000Z",
+      "photos": [
+        {
+          "id": "event-photo-04",
+          "title": "The Six Orders Core Guild Reveal",
+          "description": "Unveiling of the order leads and core execution council amidst ceremonial lights and musical fanfare.",
+          "category": "Team Reveals",
+          "date": "01 Sep 2025",
+          "venue": "Open Sky Quadrangle",
+          "photographer": "Mira Nambiar",
+          "imageUrl": "https://images.unsplash.com/photo-1528605248644-14dd04022da1?q=80&w=1200&auto=format&fit=crop",
+          "originalImageUrl": "https://images.unsplash.com/photo-1528605248644-14dd04022da1?q=80&w=1200&auto=format&fit=crop",
+          "thumbnailUrl": "",
+          "displayUrl": "",
+          "largeUrl": "",
+          "aspectRatio": "4/3",
+          "createdAt": "1970-01-01T00:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "album-event-photo-05",
+      "title": "Monuments & Heritage Expedition",
+      "description": "On-site archeological study expedition mapping ancient rock-cut acoustics and temple geometries.",
+      "published": true,
+      "createdAt": "1970-01-01T00:00:00.000Z",
+      "photos": [
+        {
+          "id": "event-photo-05",
+          "title": "Guild Masons Documenting Rock Carvings",
+          "description": "On-site archeological study expedition mapping ancient rock-cut acoustics and temple geometries.",
+          "category": "Field Expeditions",
+          "date": "18 Aug 2025",
+          "venue": "Ellora & Ajanta Rock Basins",
+          "photographer": "Tanvi Joshi",
+          "imageUrl": "https://images.unsplash.com/photo-1600100397608-f010f443b740?q=80&w=1200&auto=format&fit=crop",
+          "originalImageUrl": "https://images.unsplash.com/photo-1600100397608-f010f443b740?q=80&w=1200&auto=format&fit=crop",
+          "thumbnailUrl": "",
+          "displayUrl": "",
+          "largeUrl": "",
+          "aspectRatio": "3/4",
+          "createdAt": "1970-01-01T00:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "album-event-photo-06",
+      "title": "Kshatra Valour & Martial Display",
+      "description": "Martial artists demonstrating traditional weapon techniques and ancient defensive formations during the festival opening.",
+      "published": true,
+      "createdAt": "1970-01-01T00:00:00.000Z",
+      "photos": [
+        {
+          "id": "event-photo-06",
+          "title": "Traditional Kalaripayattu & Archery Demonstration",
+          "description": "Martial artists demonstrating traditional weapon techniques and ancient defensive formations during the festival opening.",
+          "category": "Exhibitions",
+          "date": "14 Sep 2025",
+          "venue": "Citadel Courtyard",
+          "photographer": "Rohan Verma",
+          "imageUrl": "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?q=80&w=1200&auto=format&fit=crop",
+          "originalImageUrl": "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?q=80&w=1200&auto=format&fit=crop",
+          "thumbnailUrl": "",
+          "displayUrl": "",
+          "largeUrl": "",
+          "aspectRatio": "16/9",
+          "createdAt": "1970-01-01T00:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "album-event-photo-07",
+      "title": "Night of the Astrolabes",
+      "description": "Night-sky celestial navigation session using replicas of ancient Sanskrit astrolabes and brass armillary spheres.",
+      "published": true,
+      "createdAt": "1970-01-01T00:00:00.000Z",
+      "photos": [
+        {
+          "id": "event-photo-07",
+          "title": "Stargazing and Celestial Calculations",
+          "description": "Night-sky celestial navigation session using replicas of ancient Sanskrit astrolabes and brass armillary spheres.",
+          "category": "Workshops",
+          "date": "21 Sep 2025",
+          "venue": "Observatory Rooftop",
+          "photographer": "Nikhil Patel",
+          "imageUrl": "https://images.unsplash.com/photo-1509228468518-180dd4864904?q=80&w=1200&auto=format&fit=crop",
+          "originalImageUrl": "https://images.unsplash.com/photo-1509228468518-180dd4864904?q=80&w=1200&auto=format&fit=crop",
+          "thumbnailUrl": "",
+          "displayUrl": "",
+          "largeUrl": "",
+          "aspectRatio": "4/3",
+          "createdAt": "1970-01-01T00:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "album-event-photo-08",
+      "title": "Manuscript Calligraphy Conclave",
+      "description": "Students learning traditional iron stylus engraving on cured palm-leaves using natural soot and mineral inks.",
+      "published": true,
+      "createdAt": "1970-01-01T00:00:00.000Z",
+      "photos": [
+        {
+          "id": "event-photo-08",
+          "title": "Mastering Brahmi & Sharada Scripts",
+          "description": "Students learning traditional iron stylus engraving on cured palm-leaves using natural soot and mineral inks.",
+          "category": "Workshops",
+          "date": "28 Aug 2025",
+          "venue": "Central Library Archive",
+          "photographer": "Pooja Hegde",
+          "imageUrl": "https://images.unsplash.com/photo-1461360370896-922624d12aa1?q=80&w=1200&auto=format&fit=crop",
+          "originalImageUrl": "https://images.unsplash.com/photo-1461360370896-922624d12aa1?q=80&w=1200&auto=format&fit=crop",
+          "thumbnailUrl": "",
+          "displayUrl": "",
+          "largeUrl": "",
+          "aspectRatio": "3/4",
+          "createdAt": "1970-01-01T00:00:00.000Z"
+        }
+      ]
+    }
+  ]
+}
