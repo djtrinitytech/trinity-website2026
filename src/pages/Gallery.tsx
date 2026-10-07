@@ -1,4 +1,5 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import DiscCascadeCarousel, { type DiscCascadeItem } from "../components/disc-cascade-carousel";
 import AdminPanel from "../components/admin-panel";
@@ -312,6 +313,16 @@ export default function Gallery() {
   const [loading, setLoading] = useState<boolean>(true);
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [openEventId, setOpenEventId] = useState<string | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Open admin panel if ?admin=true is in URL
+  useEffect(() => {
+    if (searchParams.get("admin") === "true") {
+      setIsAdminOpen(true);
+      // Clean the URL param so back-button works cleanly
+      setSearchParams({}, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
 
   // Fetch gallery2 data from Supabase
   useEffect(() => {
@@ -371,15 +382,6 @@ export default function Gallery() {
   return (
     <div className="relative min-h-screen w-full bg-[#030712] text-slate-100 flex flex-col font-sans overflow-hidden select-none">
       
-      {/* FLOATING ADMIN BUTTON */}
-      <button 
-        onClick={() => setIsAdminOpen(true)}
-        className="fixed top-24 right-6 z-40 px-4 py-2 bg-[#0a1226]/80 backdrop-blur-md border border-[#dc9d4a]/30 text-[#dc9d4a] rounded-xl hover:bg-[#dc9d4a]/20 transition-all duration-300 shadow-[0_0_15px_rgba(220,157,74,0.15)]"
-        style={{ fontFamily: "'Reggae One', cursive" }}
-      >
-        Admin
-      </button>
-
       {/* ── BACKGROUND IMAGE ─────────────────────────── */}
       <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
         <div

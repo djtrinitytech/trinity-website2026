@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { NavLink, Link } from "react-router-dom";
-import { Menu, X, Sparkles } from "lucide-react";
+import { NavLink, Link, useLocation } from "react-router-dom";
+import { Menu, X, Sparkles, ShieldCheck } from "lucide-react";
 import logo from "../images/trinity_logo.png";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { pathname } = useLocation();
+  const isGalleryPage = pathname === "/gallery";
 
   // Scroll detection for frosted glass navbar effect
   useEffect(() => {
@@ -106,7 +108,7 @@ const Navbar = () => {
             </Link>
           </div>
 
-          {/* Right Group (Col 8-12): 3 Links */}
+          {/* Right Group (Col 8-12): 3 Links + Admin */}
           <nav className="col-span-5 flex items-center justify-end space-x-2 xl:space-x-6">
             {rightLinks.map((link) => (
               <NavLink
@@ -126,6 +128,21 @@ const Navbar = () => {
                 {link.title}
               </NavLink>
             ))}
+            {/* Admin button — only visible on /gallery */}
+            {isGalleryPage && (
+              <Link
+                to="/gallery?admin=true"
+                className="flex items-center gap-1.5 px-3 xl:px-4 py-1.5 xl:py-2 text-xs xl:text-sm font-semibold rounded-lg transition-all duration-200 whitespace-nowrap hover:scale-105"
+                style={{
+                  color: "#dc9d4a",
+                  backgroundColor: "rgba(220,157,74,0.12)",
+                  border: "1px solid rgba(220,157,74,0.35)",
+                }}
+              >
+                <ShieldCheck size={14} />
+                Admin
+              </Link>
+            )}
           </nav>
         </div>
       </header>
@@ -221,6 +238,22 @@ const Navbar = () => {
                 {link.title}
               </NavLink>
             ))}
+            {/* Admin button in mobile menu — only on /gallery */}
+            {isGalleryPage && (
+              <Link
+                to="/gallery?admin=true"
+                onClick={() => setIsMenuOpen(false)}
+                className="w-full text-center px-6 py-3 rounded-xl font-semibold text-base sm:text-lg transition-all duration-200 flex items-center justify-center gap-2"
+                style={{
+                  color: linkColor,
+                  backgroundColor: "rgba(220,157,74,0.15)",
+                  border: "1px solid rgba(220, 157, 74, 0.35)",
+                }}
+              >
+                <ShieldCheck size={18} />
+                Admin
+              </Link>
+            )}
           </nav>
 
           {/* Quick Call-To-Action in Drawer */}
