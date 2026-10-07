@@ -2,8 +2,8 @@ import { useState, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import DiscCascadeCarousel, { type DiscCascadeItem } from "../components/disc-cascade-carousel";
 import AdminPanel from "../components/admin-panel";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
-
+import { ChevronLeft, ChevronRight, X, Loader2 } from "lucide-react";
+import { supabase } from "../lib/supabase";
 export type EventPhoto = {
   id: string;
   src: string;
@@ -90,14 +90,69 @@ const DEFAULT_EVENTS_DATA: EventCategory[] = [
   }
 ];
 
-// Persistence helpers
-const EVENTS_STORAGE_KEY = "gallery_trinity_events";
-function loadStoredEvents(): EventCategory[] {
-  try {
-    const stored = localStorage.getItem(EVENTS_STORAGE_KEY);
-    if (stored) return JSON.parse(stored);
-  } catch { /* ignore */ }
-  return DEFAULT_EVENTS_DATA;
+export type Gallery2Row = {
+  id: string;
+  event_id: string;
+  event_title: string;
+  event_subtitle: string | null;
+  event_year: string | null;
+  event_pattern: string | null;
+  event_palette: [string, string, string] | null;
+  event_cover_image: string | null;
+  photo_title: string;
+  photo_url: string;
+  storage_path: string | null;
+  photo_date: string | null;
+  photo_location: string | null;
+  frame_style: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+// Helper to transform gallery2 database rows into structured EventCategory models (1 row = 1 carousel item)
+function transformGallery2Rows(rows: Gallery2Row[]): EventCategory[] {
+  return rows.map((row, index) => {
+    // Unique identity per row using row.id or index fallback
+    const uniqueId = row.id || `gallery-item-${index}`;
+
+    // Parse palette if it arrives as a JSON string from Postgres
+    let parsedPalette: [string, string, string] = ["#1b1d1f", "#e8572b", "#f0c94c"];
+    if (Array.isArray(row.event_palette) && row.event_palette.length === 3) {
+      parsedPalette = row.event_palette as [string, string, string];
+    } else if (typeof row.event_palette === "string") {
+      try {
+        const parsed = JSON.parse(row.event_palette);
+        if (Array.isArray(parsed) && parsed.length === 3) {
+          parsedPalette = parsed as [string, string, string];
+        }
+      } catch { /* ignore fallback */ }
+    }
+
+    const itemTitle = row.photo_title || row.event_title || "Gallery Item";
+    const itemSrc = row.photo_url || row.event_cover_image || "";
+
+    const singlePhoto: EventPhoto = {
+      id: uniqueId,
+      src: itemSrc,
+      title: itemTitle,
+      date: row.photo_date || (row.created_at ? new Date(row.created_at).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" }) : ""),
+      location: row.photo_location || "Gallery Trinity",
+      eventId: row.event_id || "trinity-2026",
+      eventName: row.event_title || "Trinity Fest",
+      frameStyle: (row.frame_style as EventPhoto["frameStyle"]) || "baroque-gold",
+    };
+
+    return {
+      id: uniqueId,
+      title: itemTitle,
+      subtitle: row.event_subtitle || "Trinity Gallery Collection",
+      year: row.event_year || new Date().getFullYear().toString(),
+      pattern: (row.event_pattern as EventCategory["pattern"]) || "sunburst",
+      palette: parsedPalette,
+      coverImage: itemSrc,
+      photos: [singlePhoto],
+    };
+  });
 }
 
 // ── Photo Gallery Modal ──────────────────────────────────────────────────────
@@ -253,14 +308,45 @@ function PhotoGalleryModal({
 
 // ── Main Gallery Page ─────────────────────────────────────────────────────────────────
 export default function Gallery() {
-  const [eventsData, setEventsData] = useState<EventCategory[]>(loadStoredEvents);
+  const [eventsData, setEventsData] = useState<EventCategory[]>(DEFAULT_EVENTS_DATA);
+  const [loading, setLoading] = useState<boolean>(true);
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [openEventId, setOpenEventId] = useState<string | null>(null);
 
-  // Persist events on change
+  // Fetch gallery2 data from Supabase
+  useEffect(() => {
+    let isMounted = true;
+    async function fetchGalleryData() {
+      try {
+        setLoading(true);
+        const { data, error: supabaseError } = await supabase
+          .from("gallery2")
+          .select("*")
+          .order("created_at", { ascending: false });
+
+        if (supabaseError) {
+          throw supabaseError;
+        }
+
+        if (isMounted) {
+          if (data && data.length > 0) {
+            const transformed = transformGallery2Rows(data as Gallery2Row[]);
+            setEventsData(transformed);
+          }
+        }
+      } catch (err: unknown) {
+        console.error("Error fetching from Supabase gallery2:", err);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    }
+
+    fetchGalleryData();
+    return () => { isMounted = false; };
+  }, []);
+
   const handleUpdateEvents = useCallback((updated: EventCategory[]) => {
     setEventsData(updated);
-    localStorage.setItem(EVENTS_STORAGE_KEY, JSON.stringify(updated));
   }, []);
 
   // Map eventsData to DiscCascadeItem format
@@ -334,6 +420,13 @@ export default function Gallery() {
               if (eventId) setOpenEventId(eventId);
             }}
           />
+          {/* Non-intrusive loading badge */}
+          {loading && (
+            <div className="absolute top-4 right-4 z-50 px-3 py-1.5 rounded-full bg-slate-900/80 border border-amber-500/30 text-amber-400 flex items-center gap-2 text-xs font-mono backdrop-blur-md">
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              Updating from Supabase...
+            </div>
+          )}
         </div>
       </div>
 

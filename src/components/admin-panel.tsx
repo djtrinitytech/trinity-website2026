@@ -1,11 +1,12 @@
 import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  X, LogOut, Plus, Trash2, Crop, Upload, Check, ChevronDown,
+  X, LogOut, Plus, PlusCircle, Trash2, Crop, Upload, Check, ChevronDown,
   Shield, Mail, Lock, Eye, EyeOff, AlertTriangle, Folder, Users, Camera,
   LayoutGrid, ArrowLeft, Search, Edit3, Image as ImageIcon
 } from "lucide-react";
-import type { EventCategory, EventPhoto } from "../../App";
+import type { EventCategory, EventPhoto } from "../pages/Gallery";
+import { supabase } from "../lib/supabase";
 
 // ─── Types ──────────────────────────────────────────────────────────────
 type AdminUser = { email: string; authenticatedAt: number };
@@ -171,7 +172,7 @@ export default function AdminPanel({ isOpen, onClose, events, onUpdateEvents }: 
   const [loginPassword, setLoginPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState("");
-  const [activeSection, setActiveSection] = useState<"overview" | "photos" | "admins">("overview");
+  const [activeSection, setActiveSection] = useState<"overview" | "photos" | "admins" | "add-disc">("overview");
   const [expandedEvent, setExpandedEvent] = useState<string | null>(null);
   const [cropState, setCropState] = useState<CropState>(null);
   const [newAdminEmail, setNewAdminEmail] = useState("");
@@ -187,6 +188,21 @@ export default function AdminPanel({ isOpen, onClose, events, onUpdateEvents }: 
   const coverImageRef = useRef<HTMLInputElement>(null);
   const [coverUploadEventId, setCoverUploadEventId] = useState<string | null>(null);
 
+  // ── Add Gallery Disc form state ──────────────────────────────────────
+  const [discEventTitle, setDiscEventTitle] = useState("");
+  const [discEventSubtitle, setDiscEventSubtitle] = useState("");
+  const [discEventYear, setDiscEventYear] = useState(new Date().getFullYear().toString());
+  const [discPattern, setDiscPattern] = useState("sunburst");
+  const [discPalette, setDiscPalette] = useState<[string, string, string]>(["#1b1d1f", "#e8572b", "#f0c94c"]);
+  const [discCoverImage, setDiscCoverImage] = useState("");
+  const [discPhotoTitle, setDiscPhotoTitle] = useState("");
+  const [discPhotoUrl, setDiscPhotoUrl] = useState("");
+  const [discPhotoDate, setDiscPhotoDate] = useState("");
+  const [discPhotoLocation, setDiscPhotoLocation] = useState("Gallery Trinity");
+  const [discFrameStyle, setDiscFrameStyle] = useState("baroque-gold");
+  const [discSubmitting, setDiscSubmitting] = useState(false);
+  const [discSubmitResult, setDiscSubmitResult] = useState<{ ok: boolean; message: string } | null>(null);
+
   const handleLogin = () => {
     setLoginError("");
     const emails = getAdminEmails();
@@ -201,6 +217,77 @@ export default function AdminPanel({ isOpen, onClose, events, onUpdateEvents }: 
   };
 
   const handleLogout = () => { saveAuthUser(null); setAuthUser(null); };
+
+  const handleAddDisc = async () => {
+    setDiscSubmitResult(null);
+    if (!discEventTitle.trim()) { setDiscSubmitResult({ ok: false, message: "Event title is required." }); return; }
+    if (!discPhotoTitle.trim()) { setDiscSubmitResult({ ok: false, message: "Photo title is required." }); return; }
+    if (!discPhotoUrl.trim()) { setDiscSubmitResult({ ok: false, message: "Photo URL is required." }); return; }
+
+    setDiscSubmitting(true);
+    const eventId = discEventTitle.trim().toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+
+    const newRow = {
+      event_id: eventId,
+      event_title: discEventTitle.trim(),
+      event_subtitle: discEventSubtitle.trim() || null,
+      event_year: discEventYear.trim() || null,
+      event_pattern: discPattern,
+      event_palette: discPalette,
+      event_cover_image: discCoverImage.trim() || null,
+      photo_title: discPhotoTitle.trim(),
+      photo_url: discPhotoUrl.trim(),
+      photo_date: discPhotoDate.trim() || null,
+      photo_location: discPhotoLocation.trim() || "Gallery Trinity",
+      frame_style: discFrameStyle,
+    };
+
+    try {
+      const { data, error } = await supabase.from("gallery2").insert(newRow).select().single();
+
+      if (error) {
+        setDiscSubmitResult({
+          ok: false,
+          message: `Database error: ${error.message}${error.code === "42501" ? " — INSERT policy not yet enabled on gallery2." : ""}`,
+        });
+        return;
+      }
+
+      // Optimistically add to local carousel
+      const insertedId = (data as { id?: string } | null)?.id ?? `${eventId}-${Date.now()}`;
+      const newEvent: EventCategory = {
+        id: insertedId,
+        title: discEventTitle.trim(),
+        subtitle: discEventSubtitle.trim() || "Trinity Gallery Collection",
+        year: discEventYear.trim() || new Date().getFullYear().toString(),
+        pattern: discPattern as EventCategory["pattern"],
+        palette: discPalette,
+        coverImage: discCoverImage.trim() || discPhotoUrl.trim(),
+        photos: [{
+          id: insertedId,
+          src: discPhotoUrl.trim(),
+          title: discPhotoTitle.trim(),
+          date: discPhotoDate.trim() || new Date().toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" }),
+          location: discPhotoLocation.trim() || "Gallery Trinity",
+          eventId: eventId,
+          eventName: discEventTitle.trim(),
+          frameStyle: discFrameStyle as EventPhoto["frameStyle"],
+        }],
+      };
+      onUpdateEvents([...events, newEvent]);
+
+      setDiscSubmitResult({ ok: true, message: `✓ "${discEventTitle.trim()}" disc added to Supabase and carousel updated!` });
+      setDiscEventTitle(""); setDiscEventSubtitle(""); setDiscEventYear(new Date().getFullYear().toString());
+      setDiscPattern("sunburst"); setDiscPalette(["#1b1d1f", "#e8572b", "#f0c94c"]);
+      setDiscCoverImage(""); setDiscPhotoTitle(""); setDiscPhotoUrl("");
+      setDiscPhotoDate(""); setDiscPhotoLocation("Gallery Trinity"); setDiscFrameStyle("baroque-gold");
+
+    } catch (err: unknown) {
+      setDiscSubmitResult({ ok: false, message: `Unexpected error: ${String(err)}` });
+    } finally {
+      setDiscSubmitting(false);
+    }
+  };
 
   const addAdmin = () => {
     if (!newAdminEmail.trim() || !newAdminEmail.includes("@")) return;
@@ -471,6 +558,7 @@ export default function AdminPanel({ isOpen, onClose, events, onUpdateEvents }: 
                   { key: "overview" as const, icon: LayoutGrid, label: "Overview" },
                   { key: "photos" as const, icon: Camera, label: "Manage Photos" },
                   { key: "admins" as const, icon: Users, label: "Manage Admins" },
+                  { key: "add-disc" as const, icon: PlusCircle, label: "Add Gallery Disc" },
                 ].map((item) => (
                   <button
                     key={item.key}
@@ -514,14 +602,16 @@ export default function AdminPanel({ isOpen, onClose, events, onUpdateEvents }: 
               <header className="px-6 lg:px-8 py-4 border-b border-amber-500/10 bg-[#0a0e17]/80 backdrop-blur-sm flex items-center justify-between flex-shrink-0">
                 <div>
                   <h1 className="text-lg font-serif text-amber-100 tracking-wider font-semibold capitalize">
-                    {activeSection === "overview" ? "Dashboard Overview" : activeSection === "photos" ? "Manage Event Photos" : "Admin Management"}
+                    {activeSection === "overview" ? "Dashboard Overview" : activeSection === "photos" ? "Manage Event Photos" : activeSection === "add-disc" ? "Add Gallery Disc" : "Admin Management"}
                   </h1>
                   <p className="text-[10px] text-slate-500 font-mono tracking-wider mt-0.5">
                     {activeSection === "overview"
                       ? `${totalEvents} events • ${totalPhotos} photos`
                       : activeSection === "photos"
                         ? "Add, delete, and crop photos across all events"
-                        : `${adminEmails.length} registered admin(s)`}
+                        : activeSection === "add-disc"
+                          ? "Create a new gallery disc entry in Supabase"
+                          : `${adminEmails.length} registered admin(s)`}
                   </p>
                 </div>
                 <button onClick={onClose} className="hidden md:flex p-2 rounded-lg bg-slate-800/60 hover:bg-slate-700 text-slate-500 hover:text-white border border-slate-700/50 transition-all cursor-pointer">
@@ -796,6 +886,174 @@ export default function AdminPanel({ isOpen, onClose, events, onUpdateEvents }: 
                         </AnimatePresence>
                       </div>
                     ))}
+                  </motion.div>
+                )}
+
+
+                {/* ── ADD GALLERY DISC SECTION ─────────────────────── */}
+                {activeSection === "add-disc" && (
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6 max-w-3xl">
+
+                    {/* Info banner */}
+                    <div className="rounded-2xl bg-amber-500/8 border border-amber-500/20 px-5 py-4 flex items-start gap-3">
+                      <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <p className="text-xs text-amber-300 font-mono tracking-wide">Requires INSERT policy on <code className="bg-amber-500/15 px-1 rounded">gallery2</code></p>
+                        <p className="text-[10px] text-slate-500 font-mono mt-1">Until the RLS INSERT policy is added in Supabase, submit will show a database error. The form is fully ready.</p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+                      {/* ── LEFT: Disc / Event Info ── */}
+                      <div className="rounded-2xl bg-slate-900/50 border border-amber-500/10 p-6 space-y-4">
+                        <h3 className="text-sm font-mono uppercase tracking-widest text-amber-300/80 pb-2 border-b border-amber-500/10">Disc Settings</h3>
+
+                        <div>
+                          <label className="block text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-1.5">Event Title *</label>
+                          <input type="text" value={discEventTitle} onChange={(e) => setDiscEventTitle(e.target.value)} placeholder="e.g. FRESHERS '26"
+                            className="w-full px-3 py-2.5 bg-slate-800 border border-amber-500/15 rounded-xl text-sm text-amber-100 placeholder:text-slate-600 focus:outline-none focus:border-amber-400/40 font-mono" />
+                        </div>
+
+                        <div>
+                          <label className="block text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-1.5">Subtitle</label>
+                          <input type="text" value={discEventSubtitle} onChange={(e) => setDiscEventSubtitle(e.target.value)} placeholder="e.g. The Night of Lights"
+                            className="w-full px-3 py-2.5 bg-slate-800 border border-amber-500/15 rounded-xl text-sm text-amber-100 placeholder:text-slate-600 focus:outline-none focus:border-amber-400/40 font-mono" />
+                        </div>
+
+                        <div>
+                          <label className="block text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-1.5">Year</label>
+                          <input type="text" value={discEventYear} onChange={(e) => setDiscEventYear(e.target.value)} placeholder="2026"
+                            className="w-full px-3 py-2.5 bg-slate-800 border border-amber-500/15 rounded-xl text-sm text-amber-100 placeholder:text-slate-600 focus:outline-none focus:border-amber-400/40 font-mono" />
+                        </div>
+
+                        <div>
+                          <label className="block text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-1.5">Disc Pattern</label>
+                          <div className="grid grid-cols-4 gap-1.5">
+                            {(["sunburst","rings","halftone","horizon","stripes","eclipse","mosaic"] as const).map((p) => (
+                              <button key={p} type="button" onClick={() => setDiscPattern(p)}
+                                className={`py-1.5 px-2 rounded-lg text-[9px] font-mono uppercase tracking-wider transition-all cursor-pointer border ${
+                                  discPattern === p ? "bg-amber-500/20 text-amber-300 border-amber-500/40" : "bg-slate-800 text-slate-500 border-slate-700 hover:text-slate-300"
+                                }`}>
+                                {p}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-1.5">Palette (3 colors)</label>
+                          <div className="flex gap-3 items-center flex-wrap">
+                            {([0, 1, 2] as const).map((i) => (
+                              <div key={i} className="flex flex-col items-center gap-1.5">
+                                <div className="relative w-10 h-10 rounded-xl border-2 border-slate-600 overflow-hidden" style={{ background: discPalette[i] }}>
+                                  <input type="color" value={discPalette[i]}
+                                    onChange={(e) => { const next = [...discPalette] as [string,string,string]; next[i] = e.target.value; setDiscPalette(next); }}
+                                    className="absolute inset-0 opacity-0 cursor-pointer w-full h-full" />
+                                </div>
+                                <span className="text-[8px] font-mono text-slate-600">{["BG","MID","ACC"][i]}</span>
+                              </div>
+                            ))}
+                            <code className="text-[9px] text-slate-600 font-mono">{discPalette.join(", ")}</code>
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-1.5">Cover Image URL <span className="text-slate-600">(optional)</span></label>
+                          <input type="text" value={discCoverImage} onChange={(e) => setDiscCoverImage(e.target.value)} placeholder="https://... (defaults to photo URL)"
+                            className="w-full px-3 py-2.5 bg-slate-800 border border-amber-500/15 rounded-xl text-xs text-amber-100 placeholder:text-slate-600 focus:outline-none focus:border-amber-400/40 font-mono" />
+                        </div>
+                      </div>
+
+                      {/* ── RIGHT: Photo Info ── */}
+                      <div className="rounded-2xl bg-slate-900/50 border border-amber-500/10 p-6 space-y-4">
+                        <h3 className="text-sm font-mono uppercase tracking-widest text-amber-300/80 pb-2 border-b border-amber-500/10">Photo / Disc Image</h3>
+
+                        <div>
+                          <label className="block text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-1.5">Photo Title *</label>
+                          <input type="text" value={discPhotoTitle} onChange={(e) => setDiscPhotoTitle(e.target.value)} placeholder="e.g. Opening Night"
+                            className="w-full px-3 py-2.5 bg-slate-800 border border-amber-500/15 rounded-xl text-sm text-amber-100 placeholder:text-slate-600 focus:outline-none focus:border-amber-400/40 font-mono" />
+                        </div>
+
+                        <div>
+                          <label className="block text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-1.5">Photo URL *</label>
+                          <input type="text" value={discPhotoUrl} onChange={(e) => setDiscPhotoUrl(e.target.value)} placeholder="https://..."
+                            className="w-full px-3 py-2.5 bg-slate-800 border border-amber-500/15 rounded-xl text-xs text-amber-100 placeholder:text-slate-600 focus:outline-none focus:border-amber-400/40 font-mono" />
+                        </div>
+
+                        {discPhotoUrl && (
+                          <div className="w-full h-36 rounded-xl bg-slate-800 overflow-hidden border border-slate-700">
+                            <img src={discPhotoUrl} alt="Preview" className="w-full h-full object-cover"
+                              onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                          </div>
+                        )}
+
+                        <div>
+                          <label className="block text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-1.5">Date</label>
+                          <input type="text" value={discPhotoDate} onChange={(e) => setDiscPhotoDate(e.target.value)} placeholder="e.g. Jan 15, 2026"
+                            className="w-full px-3 py-2.5 bg-slate-800 border border-amber-500/15 rounded-xl text-sm text-amber-100 placeholder:text-slate-600 focus:outline-none focus:border-amber-400/40 font-mono" />
+                        </div>
+
+                        <div>
+                          <label className="block text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-1.5">Location</label>
+                          <input type="text" value={discPhotoLocation} onChange={(e) => setDiscPhotoLocation(e.target.value)} placeholder="Gallery Trinity"
+                            className="w-full px-3 py-2.5 bg-slate-800 border border-amber-500/15 rounded-xl text-sm text-amber-100 placeholder:text-slate-600 focus:outline-none focus:border-amber-400/40 font-mono" />
+                        </div>
+
+                        <div>
+                          <label className="block text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-1.5">Frame Style</label>
+                          <div className="grid grid-cols-2 gap-1.5">
+                            {(["baroque-gold","burnt-mahogany","broken-victorian","chipped-wood"] as const).map((fs) => (
+                              <button key={fs} type="button" onClick={() => setDiscFrameStyle(fs)}
+                                className={`py-1.5 px-2 rounded-lg text-[9px] font-mono uppercase tracking-wider transition-all cursor-pointer border ${
+                                  discFrameStyle === fs ? "bg-amber-500/20 text-amber-300 border-amber-500/40" : "bg-slate-800 text-slate-500 border-slate-700 hover:text-slate-300"
+                                }`}>
+                                {fs}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Result Banner */}
+                    <AnimatePresence>
+                      {discSubmitResult && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                          className={`rounded-xl px-5 py-3.5 text-sm font-mono border ${
+                            discSubmitResult.ok
+                              ? "bg-emerald-500/10 border-emerald-500/25 text-emerald-300"
+                              : "bg-red-500/10 border-red-500/25 text-red-300"
+                          }`}
+                        >
+                          {discSubmitResult.message}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+
+                    {/* Submit Button */}
+                    <button
+                      onClick={handleAddDisc}
+                      disabled={discSubmitting}
+                      className="w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 text-slate-950 font-bold text-sm uppercase tracking-[0.2em] font-mono hover:shadow-[0_0_35px_rgba(245,158,11,0.4)] hover:scale-[1.01] transition-all cursor-pointer border border-amber-300/40 disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100 flex items-center justify-center gap-2"
+                    >
+                      {discSubmitting ? (
+                        <>
+                          <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                          </svg>
+                          Saving to Supabase...
+                        </>
+                      ) : (
+                        <>
+                          <PlusCircle className="w-4 h-4" />
+                          Add Gallery Disc
+                        </>
+                      )}
+                    </button>
+
                   </motion.div>
                 )}
 
