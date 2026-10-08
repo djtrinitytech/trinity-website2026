@@ -1,8 +1,8 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import DiscCascadeCarousel from "../components/disc-cascade-carousel";
-import AdminPanel from "../components/admin-panel";
+import DiscCascadeCarousel from "../components/disc-cascade-carousel.jsx";
+import AdminPanel from "../components/admin-panel.jsx";
 import { ChevronLeft, ChevronRight, X, Loader2 } from "lucide-react";
 import { supabase } from "../lib/supabase";
 
@@ -335,6 +335,16 @@ export default function Gallery() {
   return (
     <div className="relative min-h-screen w-full bg-[#030712] text-slate-100 flex flex-col font-sans overflow-hidden select-none">
       
+      {/* FLOATING ADMIN BUTTON */}
+      <button 
+        onClick={() => setIsAdminOpen(true)}
+        className="fixed top-24 right-6 z-40 px-4 py-2 bg-[#0a1226]/80 backdrop-blur-md border border-[#dc9d4a]/30 text-[#dc9d4a] rounded-xl hover:bg-[#dc9d4a]/20 transition-all duration-300 shadow-[0_0_15px_rgba(220,157,74,0.15)] cursor-pointer flex items-center gap-1.5"
+        style={{ fontFamily: "'Reggae One', cursive" }}
+        title="Open Gallery Admin Panel"
+      >
+        Admin
+      </button>
+
       {/* ── BACKGROUND IMAGE ─────────────────────────── */}
       <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
         <div
