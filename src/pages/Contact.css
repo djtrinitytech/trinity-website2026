@@ -1,0 +1,331 @@
+/* ==========================================================================
+   Contact the Team — five plaques on one celestial chart.
+   Reuses the Teams page heading (om-*); everything else is prefixed ct-.
+   The site-wide map background (.app-root) stays visible throughout.
+   ========================================================================== */
+
+.ct-page {
+  --ct-gold: #d9b47a;
+  --ct-gold-strong: #e8c88f;
+  --ct-cream: #f3e6cc;
+  --ct-muted: #a8957a;
+  --ct-sans: "Outfit", "Helvetica Neue", Arial, sans-serif;
+  --ct-serif: "DM Serif Display", Georgia, serif;
+  /* tokens the shared om- heading reads (normally set by the Teams page wrapper) */
+  --om-gold: #d9b47a;
+  --om-gold-strong: #e8c88f;
+  --om-cream: #f3e6cc;
+  --om-muted: #a8957a;
+  --om-sans: "Outfit", "Helvetica Neue", Arial, sans-serif;
+  --om-serif: "DM Serif Display", Georgia, serif;
+  --ct-head: 186px; /* heading block height, used to fit the scene in one screen */
+
+  position: relative;
+  min-height: calc(100svh - 76px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 18px 24px 26px;
+  box-sizing: border-box;
+  color: var(--ct-cream);
+  font-family: var(--ct-sans);
+}
+
+.ct-page::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 55% 50% at 50% 55%, rgba(4, 8, 11, 0.42), rgba(4, 8, 11, 0.12) 65%, rgba(4, 8, 11, 0) 85%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* compact version of the shared editorial heading */
+.ct-hero {
+  margin-bottom: 6px;
+}
+
+.ct-hero .om-title {
+  font-size: clamp(30px, 3.4vw, 46px);
+}
+
+.ct-hero .om-divider {
+  margin-top: 12px;
+}
+
+/* ---------------- Scene ---------------- */
+.ct-stage {
+  container-type: inline-size;
+  position: relative;
+  /* fixed 1000×480 chart that scales to fit both width and the remaining viewport height */
+  width: min(100%, max(760px, min(1240px, calc((100svh - 76px - var(--ct-head) - 44px) * 1000 / 480))));
+  aspect-ratio: 1000 / 480;
+  margin: 0 auto;
+}
+
+.ct-geometry {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.ct-orbit {
+  fill: none;
+  stroke: rgba(214, 170, 100, 0.45);
+  stroke-width: 1;
+  stroke-dasharray: 1 7;
+  stroke-linecap: round;
+}
+
+.ct-orbit.faint {
+  stroke: rgba(214, 170, 100, 0.18);
+  stroke-dasharray: none;
+}
+
+.ct-link {
+  fill: none;
+  stroke: rgba(222, 180, 112, 0.62);
+  stroke-width: 1.25;
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.9));
+  stroke-linecap: round;
+  transition: stroke 0.4s ease, filter 0.4s ease;
+}
+
+.ct-link.is-active {
+  stroke: rgba(240, 205, 145, 0.95);
+  filter: drop-shadow(0 0 4px rgba(232, 200, 143, 0.75));
+}
+
+.ct-node {
+  fill: #e2bf82;
+}
+
+.ct-star {
+  fill: var(--ct-gold-strong);
+  filter: drop-shadow(0 0 5px rgba(232, 200, 143, 0.75));
+  transition: filter 0.4s ease;
+}
+
+.ct-star.is-active {
+  filter: drop-shadow(0 0 9px rgba(240, 205, 145, 1));
+}
+
+.ct-slot {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: 25.5%;
+  transform: translate(-50%, -50%);
+}
+
+.ct-slot.is-primary {
+  width: 30%;
+}
+
+/* ---------------- Plaque ---------------- */
+.ct-plaque {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(4px, 0.6cqw, 8px);
+  padding: clamp(14px, 1.7cqw, 22px) 16px clamp(12px, 1.5cqw, 18px);
+  text-align: center;
+  text-decoration: none;
+  color: inherit;
+  background: linear-gradient(180deg, rgba(22, 17, 11, 0.8), rgba(12, 9, 6, 0.84));
+  border: 1px solid rgba(220, 157, 74, 0.32);
+  border-radius: 3px;
+  box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  outline: none;
+  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+/* inner engraved hairline */
+.ct-plaque::before {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border: 1px solid rgba(220, 157, 74, 0.08);
+  pointer-events: none;
+}
+
+.is-primary .ct-plaque {
+  border-color: rgba(220, 157, 74, 0.5);
+  background: linear-gradient(180deg, rgba(30, 22, 13, 0.84), rgba(15, 11, 7, 0.88));
+  box-shadow: 0 0 46px -12px rgba(220, 157, 74, 0.45), 0 22px 48px -20px rgba(0, 0, 0, 0.9);
+}
+
+.ct-corner {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-color: rgba(220, 157, 74, 0.75);
+  border-style: solid;
+  pointer-events: none;
+}
+
+.ct-corner.tl { top: -1px; left: -1px; border-width: 1px 0 0 1px; }
+.ct-corner.tr { top: -1px; right: -1px; border-width: 1px 1px 0 0; }
+.ct-corner.bl { bottom: -1px; left: -1px; border-width: 0 0 1px 1px; }
+.ct-corner.br { bottom: -1px; right: -1px; border-width: 0 1px 1px 0; }
+
+.ct-plaque-star {
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  transform: translateX(-50%);
+  fill: var(--ct-gold-strong);
+  opacity: 0.75;
+  filter: drop-shadow(0 0 4px rgba(232, 200, 143, 0.6));
+  transition: opacity 0.4s ease, filter 0.4s ease;
+}
+
+.ct-role {
+  font-size: clamp(9px, 0.9cqw, 11px);
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  padding-left: 0.3em;
+  text-transform: uppercase;
+  color: var(--ct-gold);
+}
+
+.ct-name {
+  font-family: var(--ct-serif);
+  font-size: clamp(18px, 2.1cqw, 26px);
+  line-height: 1.15;
+  color: #eadcc0;
+  transition: color 0.4s ease;
+}
+
+.is-primary .ct-name {
+  font-size: clamp(22px, 2.8cqw, 34px);
+  letter-spacing: 0.04em;
+}
+
+.ct-phone {
+  font-size: clamp(13px, 1.3cqw, 16px);
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+  color: #c8b896;
+  transition: color 0.4s ease;
+}
+
+.is-primary .ct-phone {
+  font-size: clamp(14px, 1.5cqw, 18px);
+}
+
+.ct-call {
+  margin-top: 2px;
+  font-size: clamp(9px, 0.85cqw, 10.5px);
+  font-weight: 500;
+  letter-spacing: 0.32em;
+  padding-left: 0.32em;
+  text-transform: uppercase;
+  color: var(--ct-gold-strong);
+  opacity: 0;
+  transform: translateY(-3px);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.ct-call span {
+  display: inline-block;
+  letter-spacing: 0;
+  transition: transform 0.35s ease;
+}
+
+.ct-plaque:hover,
+.ct-plaque:focus-visible {
+  transform: translateY(-5px);
+  border-color: rgba(232, 200, 143, 0.75);
+  box-shadow: 0 0 34px -8px rgba(220, 157, 74, 0.5), 0 22px 44px -18px rgba(0, 0, 0, 0.9);
+}
+
+.is-primary .ct-plaque:hover,
+.is-primary .ct-plaque:focus-visible {
+  box-shadow: 0 0 56px -8px rgba(220, 157, 74, 0.6), 0 22px 48px -20px rgba(0, 0, 0, 0.9);
+}
+
+.ct-plaque:hover .ct-name,
+.ct-plaque:focus-visible .ct-name { color: #fbf1dc; }
+
+.ct-plaque:hover .ct-phone,
+.ct-plaque:focus-visible .ct-phone { color: #f0e2c4; }
+
+.ct-plaque:hover .ct-plaque-star,
+.ct-plaque:focus-visible .ct-plaque-star {
+  opacity: 1;
+  filter: drop-shadow(0 0 8px rgba(240, 205, 145, 1));
+}
+
+.ct-plaque:hover .ct-call,
+.ct-plaque:focus-visible .ct-call {
+  opacity: 1;
+  transform: none;
+}
+
+.ct-plaque:hover .ct-call span { transform: translateX(3px); }
+
+/* touch devices: no hover, so always show the call affordance */
+@media (hover: none) {
+  .ct-call { opacity: 0.85; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ct-plaque,
+  .ct-call,
+  .ct-call span { transition: none; }
+  .ct-plaque:hover,
+  .ct-plaque:focus-visible { transform: none; }
+}
+
+/* ---------------- Mobile: stacked, chairperson first ---------------- */
+@media (max-width: 860px) {
+  .ct-page {
+    justify-content: flex-start;
+    padding-top: 28px;
+  }
+
+  .ct-stage {
+    width: min(100%, 400px);
+    aspect-ratio: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+    padding: 6px 0 12px;
+  }
+
+  /* a single constellation thread runs behind the stacked plaques */
+  .ct-stage::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 1px;
+    background: linear-gradient(180deg, transparent, rgba(220, 157, 74, 0.45) 8%, rgba(220, 157, 74, 0.45) 92%, transparent);
+  }
+
+  .ct-geometry { display: none; }
+
+  .ct-slot,
+  .ct-slot.is-primary {
+    position: relative;
+    left: auto;
+    top: auto;
+    width: 100%;
+    transform: none;
+  }
+
+  .ct-name { font-size: 22px; }
+  .is-primary .ct-name { font-size: 27px; }
+  .ct-role { font-size: 10px; }
+  .ct-phone { font-size: 15px; }
+}
