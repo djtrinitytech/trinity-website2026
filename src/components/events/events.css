@@ -29,10 +29,8 @@
 
   font-family: var(--font-serif);
   color: var(--ev-foreground);
-  background-color: var(--ev-background);
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
+  /* the landing-page background (.app-root) shows through; a soft dim keeps text readable */
+  background-color: rgba(4, 8, 11, 0.45);
 }
 
 @utility text-metal {

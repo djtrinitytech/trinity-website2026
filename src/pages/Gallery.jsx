@@ -1,3 +1,4 @@
+import bgImage from "../assets/homepage/bg.png";
 import React, { useState, useCallback, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
@@ -349,7 +350,7 @@ export default function Gallery() {
       <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
         <div
           className="absolute inset-0 w-full h-full bg-center bg-cover bg-no-repeat"
-          style={{ backgroundImage: "url('/bg-map.jpg')" }}
+          style={{ backgroundImage: `linear-gradient(rgba(4, 8, 11, 0.45), rgba(4, 8, 11, 0.45)), url(${bgImage})` }}
         />
       </div>
 

@@ -1,4 +1,3 @@
-import bgEvents from "../assets/events/bg-events.png";
 import catCultural from "../assets/events/cat-cultural.png";
 import catTechnical from "../assets/events/cat-technical.png";
 import evChess from "../assets/events/ev-chess.png";
@@ -10,8 +9,6 @@ import evHackathon from "../assets/events/ev-hackathon.png";
 import evMusic from "../assets/events/ev-music.png";
 import evQuiz from "../assets/events/ev-quiz.png";
 import evRobotics from "../assets/events/ev-robotics.png";
-
-export const eventsBackground = bgEvents;
 
 // Display order: Technical, Cultural, Sports. `video` is the hover pop-out on the events page.
 export const categories = [

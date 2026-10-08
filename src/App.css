@@ -554,7 +554,7 @@
   background-color: #0b100f;
   background-image: linear-gradient(180deg, rgba(11, 16, 15, 0.72) 0%, rgba(11, 16, 15, 0.42) 25%, rgba(11, 16, 15, 0.68) 70%, #0b100f 100%),
     url('./assets/homepage/bg.png');
-  background-position: center top;
+  background-position: center center;
   background-size: cover;
   background-repeat: no-repeat;
   background-attachment: fixed;
