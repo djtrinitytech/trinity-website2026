@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import OrdersSection from "../components/homepage/OrdersSection";
 import GallerySectionDNA from "../components/homepage/GallerySectionDNA";
 import AboutSection from "../components/homepage/AboutSection";
@@ -12,11 +12,52 @@ import kshatraImg from "../assets/homepage/kshatra.png";
 import aarohanImg from "../assets/homepage/aarohan.png";
 import utkarshImg from "../assets/homepage/utkarsh.png";
 
+const NAVBAR_H = 76;
+
+// Scroll so the selected order's artifact sits at the viewport centre — the centre of the
+// background's orbital rings — while keeping the section heading clear of the navbar.
+function orderArtifactScrollTarget() {
+  const ordersEl = document.getElementById("orders");
+  const artifact = ordersEl?.querySelector(".hero-artifact-container");
+  const header = ordersEl?.querySelector(".exhibition-header");
+  const rect = artifact?.getBoundingClientRect();
+  if (!rect || !rect.width || !header) return null; // mobile layout hides the large artifact stage
+  const centred = window.scrollY + rect.top + rect.height / 2 - window.innerHeight / 2;
+  const headerLimit = window.scrollY + header.getBoundingClientRect().top - (NAVBAR_H + 12);
+  return Math.round(Math.min(centred, headerLimit));
+}
+
+function scrollToOrderArtifact() {
+  const ordersEl = document.getElementById("orders");
+  if (!ordersEl) return;
+  const target = orderArtifactScrollTarget();
+  if (target === null) {
+    ordersEl.scrollIntoView({ behavior: "smooth", block: "start" });
+    return;
+  }
+  window.scrollTo({ top: target, behavior: "smooth" });
+
+  // Sections above can shift layout mid-scroll (scroll-driven animations), so re-measure
+  // once the scroll settles and correct any small drift.
+  let done = false;
+  const correct = () => {
+    if (done) return;
+    done = true;
+    window.removeEventListener("scrollend", correct);
+    const next = orderArtifactScrollTarget();
+    if (next !== null && Math.abs(next - window.scrollY) > 2) {
+      window.scrollTo({ top: next, behavior: "smooth" });
+    }
+  };
+  window.addEventListener("scrollend", correct, { once: true });
+  setTimeout(correct, 1400); // browsers without scrollend
+}
+
 const orders = [
   {
     name: "Sindhu",
     artifact: "Sindhu",
-    dept: "Comps",
+    dept: "IT",
     cue: "AS SINDHU",
     color: "#4b9c99",
     glyph: "≈",
@@ -27,7 +68,7 @@ const orders = [
   {
     name: "Aakar",
     artifact: "Aakar",
-    dept: "IT",
+    dept: "Comps",
     cue: "AS AAKAR",
     color: "#b48b59",
     glyph: "⌂",
@@ -38,7 +79,7 @@ const orders = [
   {
     name: "Pragya",
     artifact: "Pragya",
-    dept: "Cseds",
+    dept: "Allied",
     cue: "AS PRAGYA",
     color: "#829a6c",
     glyph: "✦",
@@ -49,7 +90,7 @@ const orders = [
   {
     name: "Utkarsh",
     artifact: "Utkarsh",
-    dept: "Allied",
+    dept: "EXTC",
     cue: "AS UTKARSH",
     color: "#996b90",
     glyph: "▧",
@@ -60,7 +101,7 @@ const orders = [
   {
     name: "Aarohan",
     artifact: "Aarohan",
-    dept: "Extc",
+    dept: "DS",
     cue: "AS AAROHAN",
     color: "#5f86a6",
     glyph: "✧",
@@ -69,10 +110,10 @@ const orders = [
     blurb: "We explore beyond the known.",
   },
   {
-    name: "Kshatra",
-    artifact: "Kshatra",
+    name: "Shourya",
+    artifact: "Shourya",
     dept: "Mech",
-    cue: "AS KSHATRA",
+    cue: "AS SHOURYA",
     color: "#a65e57",
     glyph: "◈",
     className: "kshatra",
@@ -116,6 +157,31 @@ export default function Home() {
   const [isPaused, setIsPaused] = useState(false);
   const [selectedOrderIndex, setSelectedOrderIndex] = useState(0);
 
+  // Dim the fixed background as the visitor scrolls out of the hero (0 at top → 1 past the hero).
+  // Drives .app-root:has(.homepage)::after in App.css.
+  useEffect(() => {
+    const root = document.documentElement;
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const heroH = document.querySelector(".homepage .hero")?.offsetHeight || window.innerHeight;
+      const progress = Math.min(1, Math.max(0, (window.scrollY - heroH * 0.1) / (heroH * 0.6)));
+      root.style.setProperty("--home-scroll-dim", progress.toFixed(3));
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      root.style.removeProperty("--home-scroll-dim");
+    };
+  }, []);
+
   const handleSelectArtifact = (orderName) => {
     const query = orderName.toLowerCase();
     const targetIdx = ordersData.findIndex(
@@ -128,10 +194,7 @@ export default function Home() {
     if (targetIdx !== -1) {
       setSelectedOrderIndex(targetIdx);
     }
-    const ordersEl = document.getElementById("orders");
-    if (ordersEl) {
-      ordersEl.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
+    scrollToOrderArtifact();
   };
 
   const scrollToOrders = () => {

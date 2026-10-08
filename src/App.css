@@ -19,6 +19,18 @@
   z-index: 0;
 }
 
+/* Landing page: background dims as you scroll past the hero (--home-scroll-dim is set in Home.jsx).
+   The hero itself, at the top of the page, keeps the full-brightness background. */
+.app-root:has(.homepage)::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 8, 11, 0.55);
+  opacity: var(--home-scroll-dim, 0);
+  pointer-events: none;
+  z-index: 0;
+}
+
 .main-route-wrapper,
 .site-navbar,
 .footer {
@@ -273,6 +285,27 @@
   pointer-events: none;
   animation: orbit-spin 90s linear infinite;
   will-change: transform;
+}
+
+/* Soft veil behind the orbit so the artifacts and rings stay legible over the bright map.
+   Radially symmetric, so the orbit's rotation doesn't show. Mirrored by the splash hand-off. */
+.artifacts-orbit::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: calc(var(--circle-r) * 2 + 420px);
+  height: calc(var(--circle-r) * 2 + 420px);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle closest-side,
+      rgba(4, 8, 11, 0.58) 0%,
+      rgba(4, 8, 11, 0.5) 45%,
+      rgba(4, 8, 11, 0.32) 66%,
+      rgba(4, 8, 11, 0.12) 84%,
+      rgba(4, 8, 11, 0) 100%);
+  z-index: -1;
+  pointer-events: none;
 }
 
 .artifact-slot {

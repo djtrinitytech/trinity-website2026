@@ -55,7 +55,7 @@ export const initialTeams = [
   },
   {
     id: "kshatra",
-    name: "KSHATRA",
+    name: "SHOURYA",
     tagline: "The Unyielding Warrior Clan",
     theme: {
       primary: "#ef4444",

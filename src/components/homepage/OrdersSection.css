@@ -978,3 +978,20 @@
     transition: none !important;
   }
 }
+
+/* Desktop: tighter vertical rhythm so that when a hero artifact is clicked, the selected
+   artifact can sit at the viewport centre (the background orbit's centre) with the
+   section heading still visible below the navbar. */
+@media (min-width: 880px) {
+  .orders-exhibition-section {
+    padding-top: 12px;
+  }
+
+  .exhibition-header {
+    margin-bottom: 14px;
+  }
+
+  .exhibition-hero-stage {
+    transform: translateY(-88px);
+  }
+}

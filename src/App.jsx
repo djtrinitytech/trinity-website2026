@@ -12,6 +12,7 @@ import GalleryManager from "./components/admin/gallery/GalleryManager";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import CursorSparkles from "./components/CursorSparkles";
+import SplashScreen from "./components/splash/SplashScreen";
 import Home from "./pages/Home";
 import Events from "./pages/Events";
 import EventCategory from "./pages/EventCategory";
@@ -99,6 +100,7 @@ function App() {
             </Route>
           </Routes>
           <CursorSparkles />
+          <SplashScreen />
         </BrowserRouter>
       </AnnouncementNotificationProvider>
     </AuthProvider>

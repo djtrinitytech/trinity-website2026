@@ -1,12 +1,22 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
-import { Lock, ShieldCheck, ShieldAlert, LogOut } from "lucide-react";
 import { supabase } from "../lib/supabaseClient";
 import { initialTeams } from "../data/teams";
-import TeamNavigation from "../components/TeamNavigation";
 import LeaderboardCard from "../components/LeaderboardCard";
 import AdminLoginModal from "../components/AdminLoginModal";
 import AdminScorePanel from "../components/AdminScorePanel";
-import bgImage from "../assets/leaderboard-bg.jpg";
+import bgImage from "../assets/homepage/bg.png";
+import "./Leaderboard.css";
+
+const REVEAL_KEY = "leaderboard-revealed";
+const REVEAL_TOTAL_MS = 4200;
+
+// First visit (per session): podium cards land one by one, the rest fade in after.
+function revealStyle(index) {
+  if (index === 0) return { "--lb-from": 1.16, animation: "lb-podium-in 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) 0.15s both", zIndex: 3 };
+  if (index === 1) return { "--lb-from": 1.1, animation: "lb-podium-in 1.05s cubic-bezier(0.2, 0.8, 0.2, 1) 1.15s both", zIndex: 2 };
+  if (index === 2) return { "--lb-from": 1.05, animation: "lb-podium-in 0.95s cubic-bezier(0.2, 0.8, 0.2, 1) 2s both", zIndex: 1 };
+  return { animation: `lb-fade-in 0.55s ease-out ${2.75 + (index - 3) * 0.12}s both` };
+}
 
 // Decorative Gold Ornament Component for royal divider
 const RoyalGoldOrnament = () => (
@@ -31,6 +41,29 @@ const Leaderboard = () => {
 
   // SINDHU is expanded initially as per requirements
   const [expandedTeamId, setExpandedTeamId] = useState("sindhu");
+
+  // Podium reveal plays once per session (skipped for reduced motion)
+  const [revealing, setRevealing] = useState(() => {
+    if (typeof window === "undefined") return false;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return false;
+    try {
+      return !sessionStorage.getItem(REVEAL_KEY);
+    } catch {
+      return false;
+    }
+  });
+
+  useEffect(() => {
+    if (!revealing || loading) return;
+    try {
+      sessionStorage.setItem(REVEAL_KEY, "1");
+    } catch {
+      // ignore
+    }
+    // drop the animation styles afterwards so later rank changes do not replay it
+    const timer = setTimeout(() => setRevealing(false), REVEAL_TOTAL_MS);
+    return () => clearTimeout(timer);
+  }, [revealing, loading]);
 
   // Check admin status using secure Supabase RPC function check_is_admin()
   const checkAdminStatus = useCallback(async (currentUser) => {
@@ -243,29 +276,24 @@ const Leaderboard = () => {
     setExpandedTeamId((prev) => (prev === teamId ? null : teamId));
   };
 
-  const handleSelectTeamFromNav = (teamId) => {
-    setExpandedTeamId(teamId);
-    const element = document.getElementById(`team-card-${teamId}`);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    }
-  };
-
   return (
     <div className="relative min-h-screen w-full bg-[#050b18] text-white flex flex-col pt-20 pb-12 px-3 sm:px-6 lg:px-8 overflow-hidden">
       {/* =========================================
-          BACKGROUND LAYER WITH DARK OVERLAY
+          BACKGROUND LAYER: same map art + vignette as the landing page,
+          with a soft dim so the score cards stay readable
           ========================================= */}
       <div
-        className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat transition-all duration-1000"
-        style={{
-          backgroundImage: `url(${bgImage}), url('/leaderboard-bg.jpg')`,
-          backgroundPosition: "center",
-          backgroundSize: "cover",
-          filter: "brightness(2.1) contrast(1.35) saturate(1.2)",
-        }}
+        className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${bgImage})`, backgroundColor: "#080d12" }}
       >
-        <div className="absolute inset-0 bg-[#050b18]/15" />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(circle at 50% 35%, rgba(220, 157, 74, 0.02) 0%, rgba(5, 10, 18, 0.2) 50%, rgba(5, 10, 18, 0.45) 100%)",
+          }}
+        />
+        <div className="absolute inset-0 bg-[#04080b]/45" />
       </div>
 
       {/* =========================================
@@ -279,7 +307,6 @@ const Leaderboard = () => {
               onClick={() => setIsLoginModalOpen(true)}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold tracking-wider uppercase transition-all duration-200 border border-[#dc9d4a]/40 bg-[#080f22]/80 text-[#f3cf9b] hover:bg-[#dc9d4a]/20 hover:border-[#dc9d4a] shadow-[0_0_12px_rgba(220,157,74,0.2)] cursor-pointer"
             >
-              <Lock className="w-3.5 h-3.5 text-[#dc9d4a]" />
               <span>LOGIN</span>
             </button>
           ) : checkingAdmin ? (
@@ -288,7 +315,6 @@ const Leaderboard = () => {
             </div>
           ) : isAdmin ? (
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#0a2518]/90 border border-emerald-500/40 text-emerald-300 text-xs font-semibold shadow-[0_0_12px_rgba(16,185,129,0.2)]">
-              <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
               <span className="truncate max-w-[140px] sm:max-w-[200px]">
                 Admin ({session.user?.email})
               </span>
@@ -296,13 +322,11 @@ const Leaderboard = () => {
                 onClick={handleLogout}
                 className="ml-1 px-2 py-0.5 rounded-lg bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-500/50 text-emerald-200 text-[11px] font-bold uppercase transition-colors cursor-pointer flex items-center gap-1"
               >
-                <LogOut className="w-3 h-3" />
                 <span>Logout</span>
               </button>
             </div>
           ) : (
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#2a0a0a]/90 border border-rose-500/40 text-rose-300 text-xs font-semibold shadow-[0_0_12px_rgba(244,63,94,0.2)]">
-              <ShieldAlert className="w-4 h-4 text-rose-400 shrink-0" />
               <span className="truncate max-w-[140px] sm:max-w-[200px]">
                 Not Authorized ({session.user?.email})
               </span>
@@ -310,7 +334,6 @@ const Leaderboard = () => {
                 onClick={handleLogout}
                 className="ml-1 px-2 py-0.5 rounded-lg bg-rose-950/80 hover:bg-rose-900 border border-rose-500/50 text-rose-200 text-[11px] font-bold uppercase transition-colors cursor-pointer flex items-center gap-1"
               >
-                <LogOut className="w-3 h-3" />
                 <span>Logout</span>
               </button>
             </div>
@@ -340,27 +363,21 @@ const Leaderboard = () => {
           />
         )}
 
-        {/* TOP TEAM NAVIGATION */}
-        <TeamNavigation
-          teams={initialTeams}
-          selectedTeamId={expandedTeamId}
-          onSelectTeam={handleSelectTeamFromNav}
-        />
-
         {/* EXPANDABLE TEAM LEADERBOARD LIST */}
         <div className="w-full flex flex-col space-y-2.5 sm:space-y-3.5 my-2">
-          {loading && sortedTeams.length === 0 ? (
+          {loading && (revealing || sortedTeams.length === 0) ? (
             <div className="text-center py-8 text-[#dc9d4a] font-semibold tracking-wider animate-pulse">
               Loading Leaderboard...
             </div>
           ) : (
-            sortedTeams.map((team) => (
-              <LeaderboardCard
-                key={team.id}
-                team={team}
-                isExpanded={expandedTeamId === team.id}
-                onToggleExpand={() => handleToggleExpand(team.id)}
-              />
+            sortedTeams.map((team, index) => (
+              <div key={team.id} className="relative" style={revealing ? revealStyle(index) : undefined}>
+                <LeaderboardCard
+                  team={team}
+                  isExpanded={expandedTeamId === team.id}
+                  onToggleExpand={() => handleToggleExpand(team.id)}
+                />
+              </div>
             ))
           )}
         </div>

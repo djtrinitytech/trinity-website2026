@@ -14,18 +14,29 @@ const deptOptions = [
 
 const getCategoryMeta = (cat) => {
   const c = (cat || "ALL DEPARTMENTS").toUpperCase();
-  if (c.includes("SINDHU") || c.includes("COMP"))
-    return { tone: "water", glyph: "≈", filterDept: "Comps", deptLabel: "COMPS" };
-  if (c.includes("AAKAR") || c.includes("IT") || c.includes("INFO"))
-    return { tone: "arch", glyph: "⌂", filterDept: "IT", deptLabel: "IT" };
-  if (c.includes("PRAGYA") || c.includes("CSED") || c.includes("DATA"))
-    return { tone: "leaf", glyph: "❋", filterDept: "CSEDs", deptLabel: "CSEDS" };
-  if (c.includes("UTKARSH") || c.includes("ALLIED") || c.includes("FIRST YEAR") || c.includes("FE"))
-    return { tone: "textile", glyph: "▧", filterDept: "Allied", deptLabel: "ALLIED" };
-  if (c.includes("AAROHAN") || c.includes("EXTC") || c.includes("TELECOM") || c.includes("ELECTRONIC"))
-    return { tone: "feature", glyph: "✧", filterDept: "EXTC", deptLabel: "EXTC" };
-  if (c.includes("KSHATRA") || c.includes("MECH"))
-    return { tone: "deadline", glyph: "◈", filterDept: "Mech", deptLabel: "MECH" };
+  const comps = { tone: "water", glyph: "≈", filterDept: "Comps", deptLabel: "COMPS" };
+  const it = { tone: "arch", glyph: "⌂", filterDept: "IT", deptLabel: "IT" };
+  const ds = { tone: "leaf", glyph: "❋", filterDept: "CSEDs", deptLabel: "DS" };
+  const allied = { tone: "textile", glyph: "▧", filterDept: "Allied", deptLabel: "ALLIED" };
+  const extc = { tone: "feature", glyph: "✧", filterDept: "EXTC", deptLabel: "EXTC" };
+  const mech = { tone: "deadline", glyph: "◈", filterDept: "Mech", deptLabel: "MECH" };
+
+  // Team names first (final allotment): Aakar–Comps, Sindhu–IT, Aarohan–DS,
+  // Pragya–Allied, Utkarsh–EXTC, Shourya–Mech
+  if (c.includes("AAKAR")) return comps;
+  if (c.includes("SINDHU")) return it;
+  if (c.includes("AAROHAN")) return ds;
+  if (c.includes("PRAGYA")) return allied;
+  if (c.includes("UTKARSH")) return extc;
+  if (c.includes("SHOURYA") || c.includes("KSHATRA")) return mech;
+
+  // then department keywords
+  if (c.includes("COMP")) return comps;
+  if (c.includes("CSED") || c.includes("DATA") || /\bDS\b/.test(c)) return ds;
+  if (c.includes("ALLIED") || c.includes("FIRST YEAR") || /\bFE\b/.test(c)) return allied;
+  if (c.includes("EXTC") || c.includes("TELECOM") || c.includes("ELECTRONIC")) return extc;
+  if (c.includes("MECH")) return mech;
+  if (/\bIT\b/.test(c) || c.includes("INFO")) return it;
   return { tone: "feature", glyph: "▧", filterDept: "All Departments", deptLabel: "ALL DEPTS" };
 };
 

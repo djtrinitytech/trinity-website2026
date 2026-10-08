@@ -1,0 +1,31 @@
+/* First-visit podium reveal for the leaderboard (styles applied inline per rank in Leaderboard.jsx).
+   --lb-from is how enlarged each podium card arrives before settling into place. */
+@keyframes lb-podium-in {
+  0% {
+    opacity: 0;
+    transform: translateY(14px) scale(var(--lb-from, 1.1));
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(0) scale(var(--lb-from, 1.1));
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(0) scale(var(--lb-from, 1.1));
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes lb-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

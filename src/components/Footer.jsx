@@ -224,7 +224,7 @@ export default function Footer() {
 
           {/* Right Section */}
           <div className="footer-right">
-            <span>Made with <span style={{ fontSize: "14px", margin: "0 1px" }}>♡</span> by DJS Trinity</span>
+            <span>Made by DJS Trinity</span>
           </div>
         </div>
       </footer>

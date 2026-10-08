@@ -1,5 +1,4 @@
 import React from "react";
-import { ChevronDown, ChevronUp, Crown } from "lucide-react";
 import TeamLogo from "./TeamLogo";
 import ScoreBreakdown from "./ScoreBreakdown";
 
@@ -7,7 +6,6 @@ const RankBadge = ({ rank }) => {
   if (rank === 1) {
     return (
       <div className="relative flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-[#ffd700] via-[#dc9d4a] to-[#996515] text-[#050b18] font-black text-sm sm:text-base shadow-[0_0_12px_rgba(255,215,0,0.6)] border border-[#fff5c0] shrink-0">
-        <Crown className="absolute -top-2.5 left-1/2 -translate-x-1/2 w-3.5 h-3.5 text-[#ffd700] drop-shadow-[0_0_6px_rgba(255,215,0,0.9)]" />
         <span>1</span>
       </div>
     );
@@ -30,7 +28,7 @@ const RankBadge = ({ rank }) => {
   }
 
   return (
-    <div className="flex items-center justify-center w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-[#0d1629] text-[#dc9d4a] font-bold text-xs sm:text-sm border border-[#dc9d4a]/40 shrink-0">
+    <div className="flex items-center justify-center w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-[#120e09] text-[#dc9d4a] font-bold text-xs sm:text-sm border border-[#dc9d4a]/40 shrink-0">
       <span>{rank}</span>
     </div>
   );
@@ -45,8 +43,8 @@ const LeaderboardCard = ({ team, isExpanded, onToggleExpand }) => {
       id={`team-card-${team.id}`}
       className={`relative w-full rounded-xl sm:rounded-2xl transition-all duration-300 overflow-hidden border backdrop-blur-md group ${
         isExpanded
-          ? "bg-[#0b1428]/95 border-[#dc9d4a]/70 shadow-[0_8px_25px_rgba(0,0,0,0.7)]"
-          : "bg-[#070e1e]/80 border-[#dc9d4a]/25 hover:border-[#dc9d4a]/50 hover:bg-[#091326]/90 shadow-md"
+          ? "bg-[#1a140d]/92 border-[#dc9d4a]/70 shadow-[0_8px_25px_rgba(0,0,0,0.7)]"
+          : "bg-[#130f0a]/82 border-[#dc9d4a]/25 hover:border-[#dc9d4a]/50 hover:bg-[#1a140d]/90 shadow-md"
       }`}
       style={{
         boxShadow: isExpanded ? `0 0 20px ${team.theme.glow}` : undefined,
@@ -107,12 +105,14 @@ const LeaderboardCard = ({ team, isExpanded, onToggleExpand }) => {
             </div>
           </div>
 
-          <div className="p-1 sm:p-1.5 rounded-full bg-[#050b18]/60 border border-[#dc9d4a]/30 text-[#dc9d4a] transition-transform duration-300 group-hover:scale-110">
-            {isExpanded ? (
-              <ChevronUp className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            ) : (
-              <ChevronDown className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            )}
+          <div className="p-1 sm:p-1.5 rounded-full bg-[#0c0a07]/60 border border-[#dc9d4a]/30 text-[#dc9d4a] transition-transform duration-300 group-hover:scale-110">
+            <svg
+              viewBox="0 0 16 16"
+              aria-hidden="true"
+              className={`w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`}
+            >
+              <path d="M4 6.5 8 10.5 12 6.5" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
           </div>
         </div>
       </div>

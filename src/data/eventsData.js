@@ -22,6 +22,7 @@ export const categories = [
     tagline: 'The Order of Expression',
     description: 'Dance, music and theatre — stories told through rhythm, voice and stagecraft.',
     image: catCultural,
+    video: '/woman_dancing.mp4', // hover pop-out on the events page
   },
   {
     slug: 'sports',
