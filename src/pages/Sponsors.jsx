@@ -15,7 +15,7 @@ const sponsorData = {
   ]
 };
 
-const SponsorshipPage = () => {
+const Sponsors = () => {
   return (
     <div className="sponsorship-page">
       <div className="sponsorship-page-background"></div>
@@ -51,4 +51,4 @@ const SponsorshipPage = () => {
   );
 };
 
-export default SponsorshipPage;
+export default Sponsors;
