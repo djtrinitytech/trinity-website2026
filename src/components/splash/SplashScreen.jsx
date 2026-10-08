@@ -42,6 +42,23 @@ const T = {
 };
 const TURNS = 1.0;
 
+// Soundtrack: a riser whose single boom (at 7.20s into the file) must land exactly on the
+// Anugatha reveal (T.revealHit). The splash clock is the master; the audio is kept in step.
+const AUDIO_SRC = "/logo_audio/logo_reveal_audio.mp3";
+const AUDIO_BOOM_AT = 7.2;
+T.revealHit = T.revealStart + 0.15; // the moment the title starts emerging
+const AUDIO_OFFSET = AUDIO_BOOM_AT - T.revealHit; // audio position at splash t = 0
+// The soundtrack plays only once per browser: on the first press of the gate, never after.
+const AUDIO_PLAYED_KEY = "anugatha-audio-played";
+
+function audioAlreadyPlayed() {
+  try {
+    return Boolean(localStorage.getItem(AUDIO_PLAYED_KEY));
+  } catch {
+    return true; // storage blocked: cannot guarantee once-only, so stay silent
+  }
+}
+
 function shouldPlay() {
   if (typeof window === "undefined") return false;
   const params = new URLSearchParams(window.location.search);
@@ -96,6 +113,7 @@ export default function SplashScreen() {
   const dimRef = useRef(null);
   const veilRef = useRef(null);
   const gateBtnRef = useRef(null);
+  const audioRef = useRef(null);
 
   // keep the landing page from scrolling underneath while the intro is up
   const covered = phase !== null;
@@ -116,8 +134,26 @@ export default function SplashScreen() {
     for (const icon of ICONS) decodeImage(icon.src);
     document.fonts?.load(`400 80px "Noto Serif Devanagari"`, TITLE).catch(() => {});
     gateBtnRef.current?.focus({ preventScroll: true });
+    if (!audioRef.current && !audioAlreadyPlayed()) {
+      const audio = new Audio(AUDIO_SRC);
+      audio.preload = "auto";
+      audioRef.current = audio;
+    }
     const reveal = (e) => {
       if (e.type === "keydown" && (e.repeat || e.metaKey || e.ctrlKey || e.altKey || e.key === "Tab")) return;
+      // start the soundtrack inside the press itself (strict autoplay policies, e.g. Safari);
+      // the splash re-aligns it to its own clock once the animation starts
+      const audio = audioRef.current;
+      if (audio) {
+        try {
+          localStorage.setItem(AUDIO_PLAYED_KEY, "1");
+        } catch {
+          // ignore
+        }
+        audio.currentTime = AUDIO_OFFSET;
+        audio.volume = 0;
+        audio.play().catch(() => {});
+      }
       setPhase("play");
     };
     window.addEventListener("pointerdown", reveal);
@@ -255,6 +291,9 @@ export default function SplashScreen() {
     let exitAt = T.exitStart;
     let exitLen = T.exitEnd - T.exitStart;
     let burstDone = false;
+    let hitDone = false;
+    let audioBlocked = false; // browser refused playback: run silently
+    const audio = audioRef.current;
     let finished = false;
 
     const finish = () => {
@@ -333,7 +372,8 @@ export default function SplashScreen() {
       const dissolve = easeInOutSine(range(t, 6.1, 7.3));
       const massRadius = lerp(massR * massGrow * compress, splashR, splash) * (1 - dissolve);
 
-      const core = 1.7 * envelope(t, 4.2, 4.45, 4.6, 5.2) + 0.6 * envelope(t, 4.4, 4.9, 5.5, 6.3);
+      const core = 1.7 * envelope(t, 4.2, 4.45, 4.6, 5.2) + 0.6 * envelope(t, 4.4, 4.9, 5.5, 6.3) +
+        1.3 * envelope(t, T.revealHit - 0.04, T.revealHit, T.revealHit + 0.08, T.revealHit + 0.7); // boom flash
       const orbR = Math.min(W, H) * (0.27 + 0.07 * easeOutCubic(range(t, 5.3, 6.3)));
       const orbRadius = lerp(massR * 0.6, orbR, easeOutCubic(range(t, 4.35, 5.3)));
 
@@ -363,6 +403,21 @@ export default function SplashScreen() {
       fx.filaments(center.x, center.y, orbRadius, envelope(t, 4.2, 4.9, 6.0, 7.0), t * 0.22);
       fx.bloom(center.x, center.y, massR * (2.2 + core), envelope(t, 3.9, 4.45, 5.2, 6.4) * 0.9);
       fx.streak(center.x, center.y, envelope(t, 4.2, 4.5, 5.6, 6.6), W * 0.55);
+
+      // the boom: a burst + bloom exactly as the audio hits and the title starts to emerge
+      if (!hitDone && t >= T.revealHit) {
+        hitDone = true;
+        for (let k = 0; k < 110; k++) {
+          fx.spawn(center.x, center.y, {
+            speed: 2.5 + Math.random() * 7,
+            life: 50 + Math.random() * 60,
+            drag: 0.95,
+            size: 1.5 + Math.random() * 3,
+            starChance: 0.45,
+          });
+        }
+      }
+      fx.bloom(center.x, center.y, massR * 3.4, envelope(t, T.revealHit - 0.04, T.revealHit, T.revealHit + 0.1, T.revealHit + 0.9));
 
       // golden energy streams spiralling into the mass before the flash
       if (t > 3.3 && t < T.orbitEnd) {
@@ -415,6 +470,22 @@ export default function SplashScreen() {
       // ---- hand-off: fade the whole layer to reveal the identical landing page ----
       const exit = range(t, exitAt, exitAt + exitLen);
       root.style.opacity = String(1 - easeInOutSine(exit));
+
+      // ---- soundtrack: keep it locked to the splash clock so the boom lands on the reveal ----
+      if (audio && !audio.ended && !audioBlocked) {
+        const expected = t + AUDIO_OFFSET;
+        if (audio.paused) {
+          audio.currentTime = expected;
+          audio.play().catch(() => {
+            audioBlocked = true;
+          });
+        } else if (Math.abs(audio.currentTime - expected) > 0.06) {
+          audio.currentTime = expected;
+        }
+        const fadeIn = range(t, 0, 0.5);
+        const skipped = exitAt < T.exitStart;
+        audio.volume = clamp01(fadeIn * (skipped ? 1 - exit : 1));
+      }
       if (exit >= 1) {
         finish();
         return;
@@ -453,6 +524,7 @@ export default function SplashScreen() {
       window.removeEventListener("wheel", skip);
       window.removeEventListener("touchmove", skip);
       root.removeEventListener("pointerdown", skip);
+      audio?.pause();
       goop.dispose();
     };
   }, [phase]);

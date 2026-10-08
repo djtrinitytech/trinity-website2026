@@ -1,6 +1,4 @@
-import bgEvents from "../assets/events/bg-events.png";
 import catCultural from "../assets/events/cat-cultural.png";
-import catSports from "../assets/events/cat-sports.png";
 import catTechnical from "../assets/events/cat-technical.png";
 import evChess from "../assets/events/ev-chess.png";
 import evCricket from "../assets/events/ev-cricket.png";
@@ -12,26 +10,8 @@ import evMusic from "../assets/events/ev-music.png";
 import evQuiz from "../assets/events/ev-quiz.png";
 import evRobotics from "../assets/events/ev-robotics.png";
 
-export const eventsBackground = bgEvents;
-
+// Display order: Technical, Cultural, Sports. `video` is the hover pop-out on the events page.
 export const categories = [
-  {
-    slug: 'cultural',
-    name: 'Cultural',
-    sanskrit: 'संस्कृति',
-    tagline: 'The Order of Expression',
-    description: 'Dance, music and theatre — stories told through rhythm, voice and stagecraft.',
-    image: catCultural,
-    video: '/woman_dancing.mp4', // hover pop-out on the events page
-  },
-  {
-    slug: 'sports',
-    name: 'Sports',
-    sanskrit: 'क्षात्र',
-    tagline: 'The Order of Valour',
-    description: 'Contests of strength, strategy and spirit across field, court and board.',
-    image: catSports,
-  },
   {
     slug: 'technical',
     name: 'Technical',
@@ -39,6 +19,26 @@ export const categories = [
     tagline: 'The Order of Wisdom',
     description: 'Code, circuits and curiosity — where ancient ingenuity meets modern engineering.',
     image: catTechnical,
+    video: '/tech_video.mp4',
+  },
+  {
+    slug: 'cultural',
+    name: 'Cultural',
+    sanskrit: 'संस्कृति',
+    tagline: 'The Order of Expression',
+    description: 'Dance, music and theatre — stories told through rhythm, voice and stagecraft.',
+    image: catCultural,
+    video: '/woman_dancing.mp4',
+  },
+  {
+    slug: 'sports',
+    name: 'Sports',
+    sanskrit: 'क्षात्र',
+    tagline: 'The Order of Valour',
+    description: 'Contests of strength, strategy and spirit across field, court and board.',
+    image: '/sports_revised.png',
+    imagePosition: 'top', // portrait card art with text baked into its lower half
+    video: '/sports_video.mp4',
   },
 ]
 

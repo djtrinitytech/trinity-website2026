@@ -15,19 +15,34 @@ export default function CategoryCard({ category }) {
   const [popOut] = useState(() => Boolean(category.video) && canPopOut());
   const [open, setOpen] = useState(false);
 
-  // play while open; rewind once the panel has finished collapsing
+  // Play with sound while open. Browsers only allow audible playback after the visitor has
+  // interacted with the page (click/tap/key) — hover alone doesn't count — so until then the
+  // clip plays muted and the next hover after any interaction gets sound.
+  // On close, fade the audio out, then pause and rewind once the panel has collapsed.
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
     if (open) {
-      video.play().catch(() => {});
+      video.volume = 1;
+      video.muted = false;
+      video.play().catch(() => {
+        video.muted = true;
+        video.play().catch(() => {});
+      });
       return;
     }
+    const fade = setInterval(() => {
+      video.volume = Math.max(0, video.volume - 0.12);
+    }, 30);
     const timer = setTimeout(() => {
+      clearInterval(fade);
       video.pause();
       video.currentTime = 0;
     }, 450);
-    return () => clearTimeout(timer);
+    return () => {
+      clearInterval(fade);
+      clearTimeout(timer);
+    };
   }, [open]);
 
   const show = () => popOut && setOpen(true);
@@ -46,6 +61,7 @@ export default function CategoryCard({ category }) {
             src={category.image}
             alt={`${category.name} events emblem`}
             loading="lazy"
+            style={category.imagePosition ? { objectPosition: category.imagePosition } : undefined}
             className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />

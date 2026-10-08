@@ -1,3 +1,4 @@
+import bgImage from "../assets/homepage/bg.png";
 import React, { useState, useCallback, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
