@@ -1,5 +1,4 @@
 import React from "react";
-import { Heart } from "lucide-react";
 import bgImg from "../assets/homepage/bg.png";
 
 // Brand icons compatible with Lucide icon interface

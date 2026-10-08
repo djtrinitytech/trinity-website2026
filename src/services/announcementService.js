@@ -1,5 +1,4 @@
 import { supabase, isSupabaseConfigured } from "../lib/supabase";
-import { validateImageFile } from "./galleryService";
 
 /**
  * Public: Fetch published announcements whose publish time has arrived

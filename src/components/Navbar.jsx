@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { NavLink, Link, useLocation } from "react-router-dom";
-import { Menu, X, Sparkles, ShieldCheck } from "lucide-react";
+import { Menu, X, ShieldCheck } from "lucide-react";
 import logo from "../images/trinity_logo.png";
 import { useAnnouncementNotification } from "../context/AnnouncementNotificationContext";
 

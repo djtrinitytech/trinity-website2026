@@ -1,3 +1,6 @@
+<<<<<<< HEAD
+node_modules/
+=======
 # Logs
 logs
 *.log
@@ -25,4 +28,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+<<<<<<< HEAD
 .env.local
+=======
+>>>>>>> d2875f0c3a97a5045db9963c45c88b420cfd820d
+>>>>>>> origin/Sponsorship
