@@ -1,40 +1,27 @@
-export type CategorySlug = 'cultural' | 'sports' | 'technical'
+import bgEvents from "../assets/events/bg-events.png";
+import catCultural from "../assets/events/cat-cultural.png";
+import catSports from "../assets/events/cat-sports.png";
+import catTechnical from "../assets/events/cat-technical.png";
+import evChess from "../assets/events/ev-chess.png";
+import evCricket from "../assets/events/ev-cricket.png";
+import evDance from "../assets/events/ev-dance.png";
+import evDrama from "../assets/events/ev-drama.png";
+import evFootball from "../assets/events/ev-football.png";
+import evHackathon from "../assets/events/ev-hackathon.png";
+import evMusic from "../assets/events/ev-music.png";
+import evQuiz from "../assets/events/ev-quiz.png";
+import evRobotics from "../assets/events/ev-robotics.png";
 
-export type Category = {
-  slug: CategorySlug
-  name: string
-  sanskrit: string
-  tagline: string
-  description: string
-  image: string
-}
+export const eventsBackground = bgEvents;
 
-export type FestEvent = {
-  slug: string
-  category: CategorySlug
-  name: string
-  summary: string
-  description: string
-  image: string
-  date: string
-  time: string
-  venue: string
-  teamSize: string
-  entryFee: string
-  prizePool: string
-  passSteps: string[]
-  rules: string[]
-  coordinators: { name: string; phone: string }[]
-}
-
-export const categories: Category[] = [
+export const categories = [
   {
     slug: 'cultural',
     name: 'Cultural',
     sanskrit: 'संस्कृति',
     tagline: 'The Order of Expression',
     description: 'Dance, music and theatre — stories told through rhythm, voice and stagecraft.',
-    image: '/images/cat-cultural.png',
+    image: catCultural,
   },
   {
     slug: 'sports',
@@ -42,7 +29,7 @@ export const categories: Category[] = [
     sanskrit: 'क्षात्र',
     tagline: 'The Order of Valour',
     description: 'Contests of strength, strategy and spirit across field, court and board.',
-    image: '/images/cat-sports.png',
+    image: catSports,
   },
   {
     slug: 'technical',
@@ -50,7 +37,7 @@ export const categories: Category[] = [
     sanskrit: 'प्रज्ञा',
     tagline: 'The Order of Wisdom',
     description: 'Code, circuits and curiosity — where ancient ingenuity meets modern engineering.',
-    image: '/images/cat-technical.png',
+    image: catTechnical,
   },
 ]
 
@@ -61,7 +48,7 @@ const defaultPassSteps = [
   'Show the QR pass along with your college ID at the venue help desk.',
 ]
 
-export const events: FestEvent[] = [
+export const events = [
   {
     slug: 'nritya-sangam',
     category: 'cultural',
@@ -69,7 +56,7 @@ export const events: FestEvent[] = [
     summary: 'Group dance face-off spanning classical, folk and contemporary forms.',
     description:
       'Nritya Sangam brings together the finest dance crews to tell a story through movement. Teams may blend classical, folk, hip-hop or contemporary styles, and are judged on choreography, synchronisation, expression and costume.',
-    image: '/images/ev-dance.png',
+    image: evDance,
     date: '14 Feb 2027',
     time: '6:00 PM – 9:30 PM',
     venue: 'Open Air Theatre',
@@ -94,7 +81,7 @@ export const events: FestEvent[] = [
     summary: 'Battle of the bands — from Indian classical fusion to rock.',
     description:
       'Swar Taal is the stage for bands and solo musicians to prove their sound. Fusion, rock, indie or classical — every genre is welcome. Judging is based on musicality, originality, stage presence and crowd response.',
-    image: '/images/ev-music.png',
+    image: evMusic,
     date: '15 Feb 2027',
     time: '5:00 PM – 10:00 PM',
     venue: 'Main Auditorium',
@@ -119,7 +106,7 @@ export const events: FestEvent[] = [
     summary: 'Stage play competition celebrating the art of theatre.',
     description:
       'Rangmanch invites theatre groups to perform original or adapted plays. Teams are judged on script, acting, direction, use of stage and overall impact. Plays may be in English, Hindi or Marathi.',
-    image: '/images/ev-drama.png',
+    image: evDrama,
     date: '16 Feb 2027',
     time: '11:00 AM – 4:00 PM',
     venue: 'Seminar Hall A',
@@ -141,7 +128,7 @@ export const events: FestEvent[] = [
     summary: 'Inter-college 7-a-side football tournament under the floodlights.',
     description:
       'Kick Off is a knockout 7-a-side football tournament played over two days. Fast, fierce and played under floodlights — only one squad lifts the Trinity cup.',
-    image: '/images/ev-football.png',
+    image: evFootball,
     date: '14 – 15 Feb 2027',
     time: '8:00 AM onwards',
     venue: 'College Turf Ground',
@@ -166,7 +153,7 @@ export const events: FestEvent[] = [
     summary: 'Quick-fire 6-over box cricket with big hits and tight finishes.',
     description:
       'Box Cricket is a fast-paced, short-format tournament played in a netted arena. Six overs a side, special rules for boundaries and a lot of noise from the stands.',
-    image: '/images/ev-cricket.png',
+    image: evCricket,
     date: '15 Feb 2027',
     time: '9:00 AM – 6:00 PM',
     venue: 'Box Cricket Arena',
@@ -188,7 +175,7 @@ export const events: FestEvent[] = [
     summary: 'Rapid chess championship — the ancient game of kings.',
     description:
       'Named after the ancient Indian ancestor of chess, Chaturanga is a Swiss-format rapid tournament. Sharpen your openings and keep an eye on the clock.',
-    image: '/images/ev-chess.png',
+    image: evChess,
     date: '16 Feb 2027',
     time: '10:00 AM – 3:00 PM',
     venue: 'Library Hall',
@@ -210,7 +197,7 @@ export const events: FestEvent[] = [
     summary: '24-hour hackathon to build solutions for real-world problems.',
     description:
       'Code Yatra is a 24-hour overnight hackathon. Teams pick a problem statement at kickoff and build a working prototype by morning. Mentors, food and caffeine are on us.',
-    image: '/images/ev-hackathon.png',
+    image: evHackathon,
     date: '14 – 15 Feb 2027',
     time: '10:00 AM (24 hrs)',
     venue: 'Computer Centre, Block C',
@@ -235,7 +222,7 @@ export const events: FestEvent[] = [
     summary: 'Combat robotics — build it, drive it, break the other one.',
     description:
       'Robo Yuddh pits remote-controlled combat robots against each other in a protected arena. The last bot moving — or the one with the most points — advances.',
-    image: '/images/ev-robotics.png',
+    image: evRobotics,
     date: '15 Feb 2027',
     time: '12:00 PM – 6:00 PM',
     venue: 'Mechanical Workshop Arena',
@@ -257,7 +244,7 @@ export const events: FestEvent[] = [
     summary: 'Tech and general quiz — from algorithms to ancient astronomy.',
     description:
       'Jigyasa is a multi-round quiz covering technology, science, history and pop culture. A written prelim filters the top six teams for an on-stage buzzer finale.',
-    image: '/images/ev-quiz.png',
+    image: evQuiz,
     date: '16 Feb 2027',
     time: '2:00 PM – 5:00 PM',
     venue: 'Seminar Hall B',
@@ -274,14 +261,14 @@ export const events: FestEvent[] = [
   },
 ]
 
-export function getCategory(slug: string) {
+export function getCategory(slug) {
   return categories.find((c) => c.slug === slug)
 }
 
-export function getEventsByCategory(slug: CategorySlug) {
+export function getEventsByCategory(slug) {
   return events.filter((e) => e.category === slug)
 }
 
-export function getEvent(category: string, slug: string) {
+export function getEvent(category, slug) {
   return events.find((e) => e.category === category && e.slug === slug)
 }

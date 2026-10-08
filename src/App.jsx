@@ -11,8 +11,12 @@ import GalleryManager from "./components/admin/gallery/GalleryManager";
 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import CursorSparkles from "./components/CursorSparkles";
 import Home from "./pages/Home";
 import Events from "./pages/Events";
+import EventCategory from "./pages/EventCategory";
+import EventDetail from "./pages/EventDetail";
+import EventsLayout from "./components/events/EventsLayout";
 import Teams from "./pages/Teams";
 import Gallery from "./pages/Gallery";
 import Sponsors from "./pages/Sponsors";
@@ -78,7 +82,11 @@ function App() {
             {/* Public Festival Website */}
             <Route element={<PublicLayout />}>
               <Route path="/" element={<Home />} />
-              <Route path="/events" element={<Events />} />
+              <Route path="/events" element={<EventsLayout />}>
+                <Route index element={<Events />} />
+                <Route path=":category" element={<EventCategory />} />
+                <Route path=":category/:slug" element={<EventDetail />} />
+              </Route>
               <Route path="/teams" element={<Teams />} />
               <Route path="/gallery" element={<Gallery />} />
               <Route path="/sponsors" element={<Sponsors />} />
@@ -90,6 +98,7 @@ function App() {
               <Route path="*" element={<Home />} />
             </Route>
           </Routes>
+          <CursorSparkles />
         </BrowserRouter>
       </AnnouncementNotificationProvider>
     </AuthProvider>

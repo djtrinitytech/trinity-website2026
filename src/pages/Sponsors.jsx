@@ -1,17 +1,21 @@
 import React from 'react';
 import SponsorPlaceholder from '../components/SponsorPlaceholder';
-import '../styles/sponsorship.css';
+import '../components/sponsorship.css';
+import logo1 from '../images/logo1.png';
+import logo2 from '../images/logo2.png';
+import logo3 from '../images/logo3.png';
+import logo4 from '../images/logo4.png';
 
 const sponsorData = {
-  titleSponsor: { id: "title", label: "", logoUrl: "/logo1.png" },
+  titleSponsor: { id: "title", label: "", logoUrl: logo1 },
   techSponsors: [
-    { id: "tech1", label: "", logoUrl: "/logo2.png" },
-    { id: "tech2", label: "", logoUrl: "/logo3.png" }
+    { id: "tech1", label: "", logoUrl: logo2 },
+    { id: "tech2", label: "", logoUrl: logo3 }
   ],
   generalSponsors: [
-    { id: "gen1", label: "", logoUrl: "/logo4.png" },
-    { id: "gen2", label: "", logoUrl: "/logo1.png" },
-    { id: "gen3", label: "", logoUrl: "/logo2.png" }
+    { id: "gen1", label: "", logoUrl: logo4 },
+    { id: "gen2", label: "", logoUrl: logo1 },
+    { id: "gen3", label: "", logoUrl: logo2 }
   ]
 };
 

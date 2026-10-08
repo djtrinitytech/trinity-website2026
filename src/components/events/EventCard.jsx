@@ -1,21 +1,19 @@
-import Image from 'next/image'
-import Link from 'next/link'
-import { CalendarDays, MapPin } from 'lucide-react'
-import type { FestEvent } from '@/lib/events'
+import React from "react";
+import { Link } from "react-router-dom";
+import { CalendarDays, MapPin } from "lucide-react";
 
-export function EventCard({ event }: { event: FestEvent }) {
+export default function EventCard({ event }) {
   return (
     <Link
-      href={`/events/${event.category}/${event.slug}`}
+      to={`/events/${event.category}/${event.slug}`}
       className="group flex h-full flex-col overflow-hidden border border-border bg-card backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary hover:shadow-[0_0_40px_-10px_rgba(217,169,91,0.5)]"
     >
       <div className="relative aspect-[4/3] overflow-hidden">
-        <Image
-          src={event.image || '/placeholder.svg'}
+        <img
+          src={event.image}
           alt={event.name}
-          fill
-          sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
+          loading="lazy"
+          className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
         <span className="absolute right-3 top-3 border border-primary/50 bg-background/80 px-2 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-primary">
           {event.prizePool}
@@ -35,9 +33,9 @@ export function EventCard({ event }: { event: FestEvent }) {
           </span>
         </div>
         <span className="mt-5 font-serif text-sm font-semibold text-primary">
-          View details <span aria-hidden="true">{'→'}</span>
+          View details <span aria-hidden="true">→</span>
         </span>
       </div>
     </Link>
-  )
+  );
 }

@@ -1,20 +1,18 @@
-import Image from 'next/image'
-import Link from 'next/link'
-import type { Category } from '@/lib/events'
+import React from "react";
+import { Link } from "react-router-dom";
 
-export function CategoryCard({ category }: { category: Category }) {
+export default function CategoryCard({ category }) {
   return (
     <Link
-      href={`/events/${category.slug}`}
+      to={`/events/${category.slug}`}
       className="group relative flex h-full flex-col overflow-hidden border border-border bg-card backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary hover:shadow-[0_0_40px_-10px_rgba(217,169,91,0.5)]"
     >
       <div className="relative aspect-square overflow-hidden">
-        <Image
-          src={category.image || '/placeholder.svg'}
+        <img
+          src={category.image}
           alt={`${category.name} events emblem`}
-          fill
-          sizes="(min-width: 768px) 33vw, 100vw"
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
+          loading="lazy"
+          className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
       </div>
@@ -26,9 +24,9 @@ export function CategoryCard({ category }: { category: Category }) {
         <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.3em] text-muted-foreground">{category.tagline}</p>
         <p className="mt-4 text-pretty font-serif text-sm leading-relaxed text-muted-foreground">{category.description}</p>
         <span className="mt-6 border-b border-primary/60 pb-0.5 font-serif text-sm font-semibold text-primary">
-          Enter the order <span aria-hidden="true">{'→'}</span>
+          Enter the order <span aria-hidden="true">→</span>
         </span>
       </div>
     </Link>
-  )
+  );
 }
