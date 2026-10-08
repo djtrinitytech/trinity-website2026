@@ -315,9 +315,11 @@ export default function DiscCascadeCarousel({
   onIndexChange,
   onSelect,
   ariaLabel = "Film catalogue",
-  className = ""
+  className = "",
+  totalCount
 }) {
   const n = items.length;
+  const uniqueCount = totalCount ?? n;
   const start = Math.min(Math.max(Math.round(index ?? defaultIndex), 0), Math.max(n - 1, 0));
   const [active, setActive] = React.useState(start);
   const [dragging, setDragging] = React.useState(false);
@@ -648,7 +650,7 @@ export default function DiscCascadeCarousel({
                 {indexLabel} <Caret />
               </button>
               {menu ? <ul className="dcc-list" id={uid + "list"} style={{ fontFamily: sans }}>
-                  {items.map((it, k) => {
+                  {(uniqueCount < n ? items.slice(0, uniqueCount) : items).map((it, k) => {
     const y = it.credits?.find((c) => /year/i.test(c.label));
     return <li key={k}>
                         <button
@@ -773,7 +775,7 @@ export default function DiscCascadeCarousel({
             <Arrow dir={-1} />
           </button>
           <span className="dcc-count" aria-live="polite">
-            <b>{pad(active + 1)}</b> / {pad(n)}
+            <b>{pad((active % uniqueCount) + 1)}</b> / {pad(uniqueCount)}
           </span>
           <button
     type="button"

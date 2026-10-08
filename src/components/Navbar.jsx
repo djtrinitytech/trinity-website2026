@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { NavLink, Link, useLocation } from "react-router-dom";
-import { Menu, X, ShieldCheck } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import logo from "../images/trinity_logo.png";
 import { useAnnouncementNotification } from "../context/AnnouncementNotificationContext";
 
@@ -440,22 +440,6 @@ export default function Navbar() {
                 </NavLink>
               );
             })}
-            {location.pathname === "/gallery" && (
-              <Link
-                to="/gallery?admin=true"
-                className="nav-link-btn"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  color: "#dc9d4a",
-                }}
-                title="Open Gallery Admin Panel"
-              >
-                <ShieldCheck size={16} />
-                <span>Admin</span>
-              </Link>
-            )}
           </nav>
         </div>
 
@@ -525,23 +509,6 @@ export default function Navbar() {
               </NavLink>
             );
           })}
-          {location.pathname === "/gallery" && (
-            <Link
-              to="/gallery?admin=true"
-              onClick={() => setOpen(false)}
-              className="nav-link-btn"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 6,
-                color: "#dc9d4a",
-              }}
-            >
-              <ShieldCheck size={16} />
-              <span>Admin</span>
-            </Link>
-          )}
         </div>
       </div>
     </>

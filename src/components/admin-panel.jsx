@@ -251,26 +251,41 @@ export default function AdminPanel({ isOpen, onClose, events, onUpdateEvents }) 
         return;
       }
       const insertedId = data?.id ?? `${eventId}-${Date.now()}`;
-      const newEvent = {
+      const existingEventIndex = events.findIndex((ev) => ev.id === eventId);
+      const newPhoto = {
         id: insertedId,
-        title: discEventTitle.trim(),
-        subtitle: discEventSubtitle.trim() || "Trinity Gallery Collection",
-        year: discEventYear.trim() || (/* @__PURE__ */ new Date()).getFullYear().toString(),
-        pattern: discPattern,
-        palette: discPalette,
-        coverImage: discCoverImage.trim() || discPhotoUrl.trim(),
-        photos: [{
-          id: insertedId,
-          src: discPhotoUrl.trim(),
-          title: discPhotoTitle.trim(),
-          date: discPhotoDate.trim() || (/* @__PURE__ */ new Date()).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" }),
-          location: discPhotoLocation.trim() || "Gallery Trinity",
-          eventId,
-          eventName: discEventTitle.trim(),
-          frameStyle: discFrameStyle
-        }]
+        src: discPhotoUrl.trim(),
+        title: discPhotoTitle.trim(),
+        date: discPhotoDate.trim() || new Date().toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" }),
+        location: discPhotoLocation.trim() || "Gallery Trinity",
+        eventId,
+        eventName: discEventTitle.trim(),
+        frameStyle: discFrameStyle
       };
-      onUpdateEvents([...events, newEvent]);
+
+      if (existingEventIndex >= 0) {
+        const updatedEvents = events.map((ev, idx) => {
+          if (idx !== existingEventIndex) return ev;
+          return {
+            ...ev,
+            coverImage: discCoverImage.trim() || ev.coverImage || discPhotoUrl.trim(),
+            photos: [...ev.photos, newPhoto]
+          };
+        });
+        onUpdateEvents(updatedEvents);
+      } else {
+        const newEvent = {
+          id: eventId,
+          title: discEventTitle.trim(),
+          subtitle: discEventSubtitle.trim() || "Trinity Gallery Collection",
+          year: discEventYear.trim() || new Date().getFullYear().toString(),
+          pattern: discPattern,
+          palette: discPalette,
+          coverImage: discCoverImage.trim() || discPhotoUrl.trim(),
+          photos: [newPhoto]
+        };
+        onUpdateEvents([...events, newEvent]);
+      }
       setDiscSubmitResult({ ok: true, message: `\u2713 "${discEventTitle.trim()}" disc added to Supabase and carousel updated!` });
       setDiscEventTitle("");
       setDiscEventSubtitle("");

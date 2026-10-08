@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
+import { useSearchParams } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
 import { initialTeams } from "../data/teams";
 import LeaderboardCard from "../components/LeaderboardCard";
@@ -41,6 +42,8 @@ const Leaderboard = () => {
 
   // SINDHU is expanded initially as per requirements
   const [expandedTeamId, setExpandedTeamId] = useState("sindhu");
+  const [searchParams] = useSearchParams();
+  const showAdminControls = searchParams.get("admin") === "true";
 
   // Podium reveal plays once per session (skipped for reduced motion)
   const [revealing, setRevealing] = useState(() => {
@@ -300,45 +303,47 @@ const Leaderboard = () => {
           MAIN CONTENT CONTAINER (Z-INDEX 10)
           ========================================= */}
       <div className="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center">
-        {/* TOP-RIGHT AUTHENTICATION CONTROL BAR */}
-        <div className="w-full flex justify-end mb-2">
-          {!session ? (
-            <button
-              onClick={() => setIsLoginModalOpen(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold tracking-wider uppercase transition-all duration-200 border border-[#dc9d4a]/40 bg-[#080f22]/80 text-[#f3cf9b] hover:bg-[#dc9d4a]/20 hover:border-[#dc9d4a] shadow-[0_0_12px_rgba(220,157,74,0.2)] cursor-pointer"
-            >
-              <span>LOGIN</span>
-            </button>
-          ) : checkingAdmin ? (
-            <div className="px-3 py-1.5 rounded-xl bg-[#080f22]/80 border border-[#dc9d4a]/30 text-xs text-[#dc9d4a] animate-pulse">
-              Verifying Admin Permissions...
-            </div>
-          ) : isAdmin ? (
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#0a2518]/90 border border-emerald-500/40 text-emerald-300 text-xs font-semibold shadow-[0_0_12px_rgba(16,185,129,0.2)]">
-              <span className="truncate max-w-[140px] sm:max-w-[200px]">
-                Admin ({session.user?.email})
-              </span>
+        {/* TOP-RIGHT AUTHENTICATION CONTROL BAR (Only visible if ?admin=true or active session) */}
+        {(showAdminControls || session) && (
+          <div className="w-full flex justify-end mb-2">
+            {!session ? (
               <button
-                onClick={handleLogout}
-                className="ml-1 px-2 py-0.5 rounded-lg bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-500/50 text-emerald-200 text-[11px] font-bold uppercase transition-colors cursor-pointer flex items-center gap-1"
+                onClick={() => setIsLoginModalOpen(true)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold tracking-wider uppercase transition-all duration-200 border border-[#dc9d4a]/40 bg-[#080f22]/80 text-[#f3cf9b] hover:bg-[#dc9d4a]/20 hover:border-[#dc9d4a] shadow-[0_0_12px_rgba(220,157,74,0.2)] cursor-pointer"
               >
-                <span>Logout</span>
+                <span>LOGIN</span>
               </button>
-            </div>
-          ) : (
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#2a0a0a]/90 border border-rose-500/40 text-rose-300 text-xs font-semibold shadow-[0_0_12px_rgba(244,63,94,0.2)]">
-              <span className="truncate max-w-[140px] sm:max-w-[200px]">
-                Not Authorized ({session.user?.email})
-              </span>
-              <button
-                onClick={handleLogout}
-                className="ml-1 px-2 py-0.5 rounded-lg bg-rose-950/80 hover:bg-rose-900 border border-rose-500/50 text-rose-200 text-[11px] font-bold uppercase transition-colors cursor-pointer flex items-center gap-1"
-              >
-                <span>Logout</span>
-              </button>
-            </div>
-          )}
-        </div>
+            ) : checkingAdmin ? (
+              <div className="px-3 py-1.5 rounded-xl bg-[#080f22]/80 border border-[#dc9d4a]/30 text-xs text-[#dc9d4a] animate-pulse">
+                Verifying Admin Permissions...
+              </div>
+            ) : isAdmin ? (
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#0a2518]/90 border border-emerald-500/40 text-emerald-300 text-xs font-semibold shadow-[0_0_12px_rgba(16,185,129,0.2)]">
+                <span className="truncate max-w-[140px] sm:max-w-[200px]">
+                  Admin ({session.user?.email})
+                </span>
+                <button
+                  onClick={handleLogout}
+                  className="ml-1 px-2 py-0.5 rounded-lg bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-500/50 text-emerald-200 text-[11px] font-bold uppercase transition-colors cursor-pointer flex items-center gap-1"
+                >
+                  <span>Logout</span>
+                </button>
+              </div>
+            ) : (
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#2a0a0a]/90 border border-rose-500/40 text-rose-300 text-xs font-semibold shadow-[0_0_12px_rgba(244,63,94,0.2)]">
+                <span className="truncate max-w-[140px] sm:max-w-[200px]">
+                  Not Authorized ({session.user?.email})
+                </span>
+                <button
+                  onClick={handleLogout}
+                  className="ml-1 px-2 py-0.5 rounded-lg bg-rose-950/80 hover:bg-rose-900 border border-rose-500/50 text-rose-200 text-[11px] font-bold uppercase transition-colors cursor-pointer flex items-center gap-1"
+                >
+                  <span>Logout</span>
+                </button>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* PAGE HEADER: ONLY SAY "LEADERBOARD" */}
         <header className="text-center mt-1 sm:mt-2 mb-2 sm:mb-4">
