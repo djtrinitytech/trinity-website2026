@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { NavLink, Link, useLocation } from "react-router-dom";
-import { Menu, X, Sparkles } from "lucide-react";
+import { Menu, X, Sparkles, ShieldCheck } from "lucide-react";
 import logo from "../images/trinity_logo.png";
 import { useAnnouncementNotification } from "../context/AnnouncementNotificationContext";
 
@@ -248,18 +248,17 @@ export default function Navbar() {
           }
 
           .nav-mobile-overlay {
-            display: none;
             position: fixed;
             top: 64px;
             left: 0;
-            right: 0;
-            background: rgba(8, 12, 18, 0.97);
+            width: 100%;
+            background: rgba(9, 13, 19, 0.98);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(214, 175, 102, 0.25);
-            padding: 16px 22px 24px;
-            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);
+            padding: 20px 24px 32px;
             z-index: 99;
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.6);
           }
 
           .nav-mobile-overlay.open {
@@ -441,6 +440,22 @@ export default function Navbar() {
                 </NavLink>
               );
             })}
+            {location.pathname === "/gallery" && (
+              <Link
+                to="/gallery?admin=true"
+                className="nav-link-btn"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  color: "#dc9d4a",
+                }}
+                title="Open Gallery Admin Panel"
+              >
+                <ShieldCheck size={16} />
+                <span>Admin</span>
+              </Link>
+            )}
           </nav>
         </div>
 
@@ -510,6 +525,23 @@ export default function Navbar() {
               </NavLink>
             );
           })}
+          {location.pathname === "/gallery" && (
+            <Link
+              to="/gallery?admin=true"
+              onClick={() => setOpen(false)}
+              className="nav-link-btn"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 6,
+                color: "#dc9d4a",
+              }}
+            >
+              <ShieldCheck size={16} />
+              <span>Admin</span>
+            </Link>
+          )}
         </div>
       </div>
     </>

@@ -58,39 +58,39 @@ function App() {
         <BrowserRouter>
           <ScrollToTop />
           <Routes>
-          {/* Admin Authentication */}
-          <Route path="/admin/login" element={<AdminLogin />} />
+            {/* Admin Authentication */}
+            <Route path="/admin/login" element={<AdminLogin />} />
 
-          {/* Protected Admin CMS Dashboard */}
-          <Route
-            path="/admin"
-            element={
-              <ProtectedRoute>
-                <Admin />
-              </ProtectedRoute>
-            }
-          >
-            <Route index element={<DashboardOverview />} />
-            <Route path="announcements" element={<AnnouncementManager />} />
-            <Route path="gallery" element={<GalleryManager />} />
-          </Route>
+            {/* Protected Admin CMS Dashboard */}
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute>
+                  <Admin />
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<DashboardOverview />} />
+              <Route path="announcements" element={<AnnouncementManager />} />
+              <Route path="gallery" element={<GalleryManager />} />
+            </Route>
 
-          {/* Public Festival Website */}
-          <Route element={<PublicLayout />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/events" element={<Events />} />
-            <Route path="/teams" element={<Teams />} />
-            <Route path="/gallery" element={<Gallery />} />
-            <Route path="/sponsors" element={<Sponsors />} />
-            <Route path="/leaderboard" element={<Leaderboard />} />
-            <Route path="/registrations" element={<Registrations />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/announcements" element={<Announcements />} />
-            {/* Fallback */}
-            <Route path="*" element={<Home />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+            {/* Public Festival Website */}
+            <Route element={<PublicLayout />}>
+              <Route path="/" element={<Home />} />
+              <Route path="/events" element={<Events />} />
+              <Route path="/teams" element={<Teams />} />
+              <Route path="/gallery" element={<Gallery />} />
+              <Route path="/sponsors" element={<Sponsors />} />
+              <Route path="/leaderboard" element={<Leaderboard />} />
+              <Route path="/registrations" element={<Registrations />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/announcements" element={<Announcements />} />
+              {/* Fallback */}
+              <Route path="*" element={<Home />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
       </AnnouncementNotificationProvider>
     </AuthProvider>
   );
