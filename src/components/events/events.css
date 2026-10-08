@@ -1,0 +1,44 @@
+/*
+ * Events page theme.
+ * The colour utilities below (text-primary, bg-card, border-border, ...) resolve to
+ * --ev-* variables that are only defined inside .events-theme, and the font
+ * overrides are scoped the same way, so no other page is affected.
+ */
+@theme inline {
+  --font-devanagari: "Tiro Devanagari Hindi", serif;
+  --color-background: var(--ev-background);
+  --color-foreground: var(--ev-foreground);
+  --color-card: var(--ev-card);
+  --color-primary: var(--ev-primary);
+  --color-primary-foreground: var(--ev-primary-foreground);
+  --color-muted-foreground: var(--ev-muted-foreground);
+  --color-border: var(--ev-border);
+}
+
+.events-theme {
+  --ev-background: #0b0c0b;
+  --ev-foreground: #ece0c8;
+  --ev-card: rgba(16, 15, 12, 0.82);
+  --ev-primary: #d4a356;
+  --ev-primary-foreground: #0f0b08;
+  --ev-muted-foreground: #b09c80;
+  --ev-border: rgba(217, 169, 91, 0.28);
+
+  --font-serif: "Playfair Display", Georgia, serif;
+  --font-mono: "Space Mono", ui-monospace, monospace;
+
+  font-family: var(--font-serif);
+  color: var(--ev-foreground);
+  background-color: var(--ev-background);
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+@utility text-metal {
+  background: linear-gradient(180deg, #f3e6cc 0%, #c9b28a 45%, #7d6a4e 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.7));
+}

@@ -1,248 +1,549 @@
 import React, { useState, useEffect } from "react";
-import { NavLink, Link } from "react-router-dom";
-import { Menu, X, Sparkles } from "lucide-react";
+import { NavLink, Link, useLocation } from "react-router-dom";
+import { Menu, X, ShieldCheck } from "lucide-react";
 import logo from "../images/trinity_logo.png";
+import { useAnnouncementNotification } from "../context/AnnouncementNotificationContext";
 
-const Navbar = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+export default function Navbar() {
+  const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const location = useLocation();
+  const isHome = location.pathname === "/";
+  const { unreadCount } = useAnnouncementNotification();
 
-  // Scroll detection for frosted glass navbar effect
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 30);
+    const handleScroll = () => setScrolled(window.scrollY > 25);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-
-  // Lock body scroll when mobile menu is open
   useEffect(() => {
-    if (isMenuOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [isMenuOpen]);
+    setOpen(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [location.pathname]);
 
-  // Close mobile menu on Escape key
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key === "Escape") setIsMenuOpen(false);
+      if (e.key === "Escape" && open) setOpen(false);
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
+  }, [open]);
 
-  const navLinks = [
+  // Left shortcuts (swapped & balanced)
+  const leftNavItems = [
     { title: "Events", path: "/events" },
-    { title: "Teams", path: "/teams" },
-    { title: "Gallery", path: "/gallery" },
-    { title: "Sponsors", path: "/sponsors" },
     { title: "Leaderboard", path: "/leaderboard" },
+    { title: "Gallery", path: "/gallery" },
     { title: "Registrations", path: "/registrations" },
+  ];
+
+  // Right shortcuts (swapped & balanced)
+  const rightNavItems = [
+    { title: "Teams", path: "/teams" },
+    { title: "Sponsors", path: "/sponsors" },
+    { title: "Announcements", path: "/announcements" },
     { title: "Contact Us", path: "/contact" },
   ];
 
-  // Left group: 4 links (Events, Teams, Gallery, Sponsors)
-  const leftLinks = navLinks.slice(0, 4);
-  // Right group: 3 links (Leaderboard, Registrations, Contact Us)
-  const rightLinks = navLinks.slice(4);
-
-  const linkColor = "#dc9d4a"; // gold color
-  const lightGold = "#f3cf9b";
+  const allNavItems = [...leftNavItems, ...rightNavItems];
 
   return (
     <>
-      {/* =========================================
-          DESKTOP NAVBAR (Screen width >= 1024px)
-          ========================================= */}
-      <header
-        className={`hidden lg:flex fixed top-0 left-0 w-full z-50 items-center justify-between transition-all duration-300 px-6 xl:px-12 ${
-          scrolled
-            ? "bg-[#050b18]/85 py-3 backdrop-blur-md border-b border-[#dc9d4a]/20 shadow-[0_4px_30px_rgba(0,0,0,0.5)]"
-            : "bg-transparent py-5"
-        }`}
-        style={{
-          fontFamily: "'Reggae One', cursive",
-        }}
-      >
-        <div className="w-full max-w-7xl mx-auto grid grid-cols-12 items-center gap-2">
-          {/* Left Group (Col 1-5): 4 Links */}
-          <nav className="col-span-5 flex items-center justify-start space-x-2 xl:space-x-6">
-            {leftLinks.map((link) => (
+      <style>{`
+        .site-navbar {
+          height: 76px;
+          position: fixed;
+          z-index: 100;
+          top: 0;
+          left: 0;
+          width: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0 clamp(20px, 3.5vw, 60px);
+          border-bottom: 1px solid rgba(214, 175, 102, 0.2);
+          background: rgba(11, 16, 15, 0.65);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+          transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease, backdrop-filter 0.35s ease;
+        }
+
+        /* Fully transparent on homepage when not scrolled */
+        .site-navbar.is-home:not(.scrolled):not(.menu-open) {
+          background: transparent;
+          border-bottom-color: transparent;
+          backdrop-filter: none;
+          -webkit-backdrop-filter: none;
+          box-shadow: none;
+        }
+
+        .site-navbar.scrolled {
+          background: rgba(8, 12, 18, 0.88);
+          border-bottom-color: rgba(214, 175, 102, 0.2);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+        }
+
+        .site-navbar.menu-open {
+          background: rgba(8, 12, 18, 0.97);
+          border-bottom-color: rgba(214, 175, 102, 0.25);
+        }
+
+        .nav-grid-container {
+          width: 100%;
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+          align-items: center;
+        }
+
+        .desktop-only {
+          display: grid;
+        }
+
+        .mobile-only {
+          display: none;
+        }
+
+        .nav-edge-side {
+          display: flex;
+          align-items: center;
+          gap: clamp(16px, 2.2vw, 36px);
+        }
+
+        .nav-edge-side.left {
+          justify-content: flex-start;
+        }
+
+        .nav-edge-side.right {
+          justify-content: flex-end;
+        }
+
+        .nav-center-brand {
+          background: none;
+          border: 0;
+          padding: 0 clamp(16px, 2.5vw, 36px);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+          cursor: pointer;
+          outline: none;
+          transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .nav-center-brand img {
+          height: 46px;
+          width: auto;
+          max-width: 155px;
+          object-fit: contain;
+          display: block;
+          transition: transform 0.25s ease, filter 0.25s ease;
+          filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.45));
+        }
+
+        .nav-center-brand:hover img {
+          transform: scale(1.08);
+          filter: drop-shadow(0 0 18px rgba(229, 175, 82, 0.6));
+        }
+
+        .nav-link-btn {
+          text-decoration: none;
+          border: 0;
+          background: none;
+          font-size: clamp(13.5px, 1vw, 15.5px);
+          font-family: "DM Serif Display", Georgia, serif;
+          font-weight: 500;
+          letter-spacing: 0.04em;
+          color: #e5b058;
+          opacity: 0.92;
+          padding: 6px 4px;
+          transition: all 0.22s ease;
+          cursor: pointer;
+          white-space: nowrap;
+          position: relative;
+          text-shadow: 0 1px 10px rgba(229, 176, 88, 0.3);
+        }
+
+        .nav-link-btn::after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 50%;
+          width: 0;
+          height: 2px;
+          background: linear-gradient(90deg, transparent, #ffd885, transparent);
+          transition: width 0.25s ease, left 0.25s ease;
+        }
+
+        .nav-link-btn:hover::after,
+        .nav-link-btn.active::after {
+          width: 80%;
+          left: 10%;
+        }
+
+        .nav-link-btn:hover,
+        .nav-link-btn.active {
+          color: #fff6e0;
+          opacity: 1;
+          text-shadow: 0 0 16px rgba(239, 194, 108, 0.85);
+          transform: translateY(-1px);
+        }
+
+        .nav-mobile-overlay {
+          display: none;
+        }
+
+        @media (max-width: 980px) {
+          .site-navbar {
+            height: 64px;
+            padding: 0 18px;
+          }
+
+          .desktop-only {
+            display: none !important;
+          }
+
+          .mobile-only {
+            display: flex !important;
+            width: 100%;
+            align-items: center;
+            justify-content: space-between;
+          }
+
+          .mobile-spacer {
+            width: 38px;
+            height: 38px;
+            flex-shrink: 0;
+          }
+
+          .mobile-logo-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+          }
+
+          .mobile-logo-img {
+            height: 36px;
+            width: auto;
+            max-width: 125px;
+            object-fit: contain;
+          }
+
+          .nav-mobile-hamburger {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            border: 1px solid rgba(229, 176, 88, 0.4);
+            background: rgba(229, 176, 88, 0.1);
+            color: #e5b058;
+            cursor: pointer;
+            flex-shrink: 0;
+          }
+
+          .nav-mobile-overlay {
+            position: fixed;
+            top: 64px;
+            left: 0;
+            width: 100%;
+            background: rgba(9, 13, 19, 0.98);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(214, 175, 102, 0.25);
+            padding: 20px 24px 32px;
+            z-index: 99;
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.6);
+          }
+
+          .nav-mobile-overlay.open {
+            display: block;
+            animation: mobileNavDown 0.22s ease-out;
+          }
+
+          @keyframes mobileNavDown {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+
+          .nav-mobile-list {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+          }
+
+          .nav-mobile-list .nav-link-btn {
+            display: block;
+            text-align: center;
+            padding: 12px 16px;
+            font-size: 15.5px;
+            border-bottom: 1px solid rgba(214, 175, 102, 0.12);
+            border-radius: 6px;
+          }
+
+          .nav-mobile-list .nav-link-btn:last-child {
+            border-bottom: 0;
+          }
+        }
+
+        /* ---------------- Announcement Notification Ping Badge ---------------- */
+        .announcements-nav-item {
+          display: inline-flex !important;
+          align-items: center;
+          gap: 6px;
+        }
+
+        .nav-ping-badge {
+          position: relative;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          vertical-align: middle;
+          margin-left: 6px;
+          transform: translateY(-1px);
+          user-select: none;
+        }
+
+        .nav-ping-core {
+          position: relative;
+          z-index: 2;
+          min-width: 19px;
+          height: 19px;
+          padding: 0 5px;
+          border-radius: 9999px;
+          background: linear-gradient(135deg, #e14938 0%, #d87d28 50%, #c9933b 100%);
+          color: #ffffff;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+          font-size: 10.5px;
+          font-weight: 700;
+          line-height: 19px;
+          text-align: center;
+          border: 1px solid rgba(255, 235, 190, 0.7);
+          box-shadow: 0 0 10px rgba(225, 73, 56, 0.75), 0 0 16px rgba(214, 175, 102, 0.45);
+          letter-spacing: 0;
+        }
+
+        .nav-ping-ring {
+          position: absolute;
+          inset: -3px;
+          border-radius: 9999px;
+          border: 1.5px solid rgba(235, 95, 70, 0.85);
+          box-shadow: 0 0 8px rgba(235, 95, 70, 0.5);
+          pointer-events: none;
+          z-index: 1;
+          animation: navPingWave 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+        }
+
+        @keyframes navPingWave {
+          0% {
+            transform: scale(0.9);
+            opacity: 0.95;
+          }
+          60% {
+            transform: scale(1.65);
+            opacity: 0;
+          }
+          100% {
+            transform: scale(1.65);
+            opacity: 0;
+          }
+        }
+
+        /* Mobile Hamburger notification dot */
+        .mobile-hamburger-ping {
+          position: absolute;
+          top: 3px;
+          right: 3px;
+          width: 9px;
+          height: 9px;
+          border-radius: 50%;
+          background: #e14938;
+          border: 1.5px solid #080c12;
+          box-shadow: 0 0 8px #e14938;
+          animation: hamburgerPulse 1.8s ease-in-out infinite alternate;
+          pointer-events: none;
+        }
+
+        @keyframes hamburgerPulse {
+          from {
+            transform: scale(0.85);
+            box-shadow: 0 0 4px #e14938;
+          }
+          to {
+            transform: scale(1.25);
+            box-shadow: 0 0 12px #ff6955, 0 0 6px #e5b058;
+          }
+        }
+      `}</style>
+
+      <header className={`site-navbar ${scrolled ? "scrolled" : ""} ${isHome ? "is-home" : ""} ${open ? "menu-open" : ""}`}>
+        {/* DESKTOP NAVBAR: Exactly 3 Grid Columns (Left 1fr, Center Auto, Right 1fr) */}
+        <div className="nav-grid-container desktop-only">
+          {/* Left shortcuts - aligned to Left Edge */}
+          <nav className="nav-edge-side left" aria-label="Left navigation">
+            {leftNavItems.map((item) => (
               <NavLink
-                key={link.path}
-                to={link.path}
-                className="px-2.5 xl:px-3.5 py-1.5 xl:py-2 text-xs xl:text-sm font-semibold rounded-lg transition-all duration-200 whitespace-nowrap hover:scale-105"
-                style={({ isActive }) => ({
-                  color: linkColor,
-                  backgroundColor: isActive
-                    ? "rgba(243, 207, 155, 0.2)"
-                    : "transparent",
-                  border: isActive
-                    ? "1px solid rgba(243,207,155,0.35)"
-                    : "1px solid transparent",
-                })}
+                key={item.path}
+                to={item.path}
+                className={({ isActive }) =>
+                  `nav-link-btn ${isActive ? "active" : ""}`
+                }
               >
-                {link.title}
+                {item.title}
               </NavLink>
             ))}
           </nav>
 
-          {/* Center Group (Col 6-7): Trinity Logo */}
-          <div className="col-span-2 flex items-center justify-center">
-            <Link
-              to="/"
-              className="flex items-center space-x-2 transition-transform duration-200 hover:scale-105"
-            >
-              <img
-                src={logo}
-                alt="Trinity Logo"
-                className="h-10 xl:h-12 w-auto object-contain filter drop-shadow-[0_0_12px_rgba(220,157,74,0.3)]"
-              />
-            </Link>
-          </div>
+          {/* Middle Center Logo */}
+          <Link
+            to="/"
+            className="nav-center-brand"
+            aria-label="Go to Trinity home"
+          >
+            <img src={logo} alt="Trinity Logo" />
+          </Link>
 
-          {/* Right Group (Col 8-12): 3 Links */}
-          <nav className="col-span-5 flex items-center justify-end space-x-2 xl:space-x-6">
-            {rightLinks.map((link) => (
-              <NavLink
-                key={link.path}
-                to={link.path}
-                className="px-2.5 xl:px-3.5 py-1.5 xl:py-2 text-xs xl:text-sm font-semibold rounded-lg transition-all duration-200 whitespace-nowrap hover:scale-105"
-                style={({ isActive }) => ({
-                  color: linkColor,
-                  backgroundColor: isActive
-                    ? "rgba(243, 207, 155, 0.2)"
-                    : "transparent",
-                  border: isActive
-                    ? "1px solid rgba(243,207,155,0.35)"
-                    : "1px solid transparent",
-                })}
+          {/* Right shortcuts - aligned to Right Edge */}
+          <nav className="nav-edge-side right" aria-label="Right navigation">
+            {rightNavItems.map((item) => {
+              const isAnnouncements = item.path === "/announcements";
+              return (
+                <NavLink
+                  key={item.path}
+                  to={item.path}
+                  className={({ isActive }) =>
+                    `nav-link-btn ${isActive ? "active" : ""} ${
+                      isAnnouncements ? "announcements-nav-item" : ""
+                    }`
+                  }
+                >
+                  <span>{item.title}</span>
+                  {isAnnouncements && unreadCount > 0 && (
+                    <span
+                      className="nav-ping-badge"
+                      title={`${unreadCount} new announcement${
+                        unreadCount > 1 ? "s" : ""
+                      }`}
+                      aria-label={`${unreadCount} new announcements`}
+                    >
+                      <span className="nav-ping-ring" />
+                      <span className="nav-ping-core">
+                        {unreadCount > 9 ? "9+" : unreadCount}
+                      </span>
+                    </span>
+                  )}
+                </NavLink>
+              );
+            })}
+            {location.pathname === "/gallery" && (
+              <Link
+                to="/gallery?admin=true"
+                className="nav-link-btn"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  color: "#dc9d4a",
+                }}
+                title="Open Gallery Admin Panel"
               >
-                {link.title}
-              </NavLink>
-            ))}
+                <ShieldCheck size={16} />
+                <span>Admin</span>
+              </Link>
+            )}
           </nav>
+        </div>
+
+        {/* MOBILE TOP BAR (< 980px) */}
+        <div className="mobile-bar mobile-only">
+          <div className="mobile-spacer" />
+          <Link
+            to="/"
+            className="mobile-logo-link"
+            onClick={() => setOpen(false)}
+          >
+            <img src={logo} alt="Trinity Logo" className="mobile-logo-img" />
+          </Link>
+          <button
+            className="nav-mobile-hamburger"
+            onClick={() => setOpen(!open)}
+            aria-label="Toggle navigation menu"
+            aria-expanded={open}
+            style={{ position: "relative" }}
+          >
+            {open ? <X size={22} /> : <Menu size={22} />}
+            {unreadCount > 0 && !open && (
+              <span className="mobile-hamburger-ping" />
+            )}
+          </button>
         </div>
       </header>
 
-      {/* =========================================
-          MOBILE & TABLET TOP BAR (Screen width < 1024px)
-          ========================================= */}
-      <header
-        className={`lg:hidden fixed top-0 left-0 w-full z-50 flex items-center justify-between px-5 py-3 transition-all duration-300 ${
-          scrolled || isMenuOpen
-            ? "bg-[#050b18]/90 backdrop-blur-md border-b border-[#dc9d4a]/25 shadow-lg"
-            : "bg-[#050b18]/40 backdrop-blur-sm"
-        }`}
-        style={{
-          fontFamily: "'Reggae One', cursive",
-        }}
-      >
-        {/* Mobile Left: Logo */}
-        <Link
-          to="/"
-          onClick={() => setIsMenuOpen(false)}
-          className="flex items-center space-x-2"
-        >
-          <img
-            src={logo}
-            alt="Trinity Logo"
-            className="h-9 sm:h-10 w-auto object-contain"
-          />
-        </Link>
-
-        {/* Mobile Right: Hamburger Toggle Button */}
-        <button
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="p-2 sm:p-2.5 rounded-xl transition-all duration-200 cursor-pointer flex items-center justify-center"
-          style={{
-            color: linkColor,
-            backgroundColor: isMenuOpen
-              ? "rgba(220, 157, 74, 0.2)"
-              : "rgba(11, 26, 59, 0.8)",
-            border: `1px solid ${linkColor}`,
-          }}
-          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-          aria-expanded={isMenuOpen}
-        >
-          {isMenuOpen ? <X size={22} /> : <Menu size={22} />}
-        </button>
-      </header>
-
-      {/* =========================================
-          MOBILE & TABLET MENU OVERLAY
-          ========================================= */}
-      <div
-        className={`lg:hidden fixed inset-0 z-40 backdrop-blur-xl transition-all duration-300 ease-in-out ${
-          isMenuOpen
-            ? "opacity-100 pointer-events-auto"
-            : "opacity-0 pointer-events-none"
-        }`}
-        style={{
-          backgroundColor: "rgba(5, 11, 24, 0.96)",
-          fontFamily: "'Reggae One', cursive",
-        }}
-      >
-        <div className="flex flex-col h-full pt-20 pb-8 px-6 overflow-y-auto">
-          {/* Centered Logo in Drawer Header */}
-          <div className="flex justify-center mb-6">
-            <Link to="/" onClick={() => setIsMenuOpen(false)}>
-              <img
-                src={logo}
-                alt="Trinity Logo"
-                className="h-14 sm:h-16 w-auto object-contain drop-shadow-[0_0_15px_rgba(220,157,74,0.3)]"
-              />
-            </Link>
-          </div>
-
-          {/* Navigation Links list */}
-          <nav className="flex flex-col space-y-2.5 max-w-sm mx-auto w-full flex-1 justify-center">
-            {navLinks.map((link) => (
+      {/* Mobile Drawer Overlay */}
+      <div className={`nav-mobile-overlay ${open ? "open" : ""}`}>
+        <div className="nav-mobile-list">
+          {allNavItems.map((item) => {
+            const isAnnouncements = item.path === "/announcements";
+            return (
               <NavLink
-                key={link.path}
-                to={link.path}
-                className="w-full text-center px-6 py-3 rounded-xl font-semibold text-base sm:text-lg transition-all duration-200 block"
-                style={({ isActive }) => ({
-                  color: linkColor,
-                  backgroundColor: isActive
-                    ? "rgba(243, 207, 155, 0.2)"
-                    : "rgba(11, 26, 59, 0.5)",
-                  border: isActive
-                    ? "1px solid rgba(243,207,155,0.4)"
-                    : "1px solid rgba(220, 157, 74, 0.15)",
-                })}
-                onClick={() => setIsMenuOpen(false)}
+                key={item.path}
+                to={item.path}
+                className={({ isActive }) =>
+                  `nav-link-btn ${isActive ? "active" : ""} ${
+                    isAnnouncements ? "announcements-nav-item" : ""
+                  }`
+                }
+                onClick={() => setOpen(false)}
+                style={
+                  isAnnouncements
+                    ? {
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: 8,
+                      }
+                    : undefined
+                }
               >
-                {link.title}
+                <span>{item.title}</span>
+                {isAnnouncements && unreadCount > 0 && (
+                  <span
+                    className="nav-ping-badge"
+                    title={`${unreadCount} new announcements`}
+                  >
+                    <span className="nav-ping-ring" />
+                    <span className="nav-ping-core">
+                      {unreadCount > 9 ? "9+" : unreadCount}
+                    </span>
+                  </span>
+                )}
               </NavLink>
-            ))}
-          </nav>
-
-          {/* Quick Call-To-Action in Drawer */}
-          <div className="mt-6 pt-4 border-t border-[#dc9d4a]/20 max-w-sm mx-auto w-full text-center">
+            );
+          })}
+          {location.pathname === "/gallery" && (
             <Link
-              to="/announcements"
-              onClick={() => setIsMenuOpen(false)}
-              className="inline-flex items-center justify-center gap-2 w-full py-3 px-5 rounded-xl font-bold text-sm transition-all"
+              to="/gallery?admin=true"
+              onClick={() => setOpen(false)}
+              className="nav-link-btn"
               style={{
-                backgroundColor: "rgba(220, 157, 74, 0.15)",
-                color: lightGold,
-                border: "1px solid rgba(220, 157, 74, 0.3)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 6,
+                color: "#dc9d4a",
               }}
             >
-              <Sparkles size={16} style={{ color: linkColor }} />
-              <span>Latest Announcements</span>
+              <ShieldCheck size={16} />
+              <span>Admin</span>
             </Link>
-          </div>
+          )}
         </div>
       </div>
     </>
   );
-};
-
-export default Navbar;
+}

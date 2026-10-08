@@ -1,0 +1,235 @@
+/* Intro splash layer. Everything is prefixed so nothing leaks into the landing page. */
+.anugatha-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  overflow: hidden;
+  cursor: default;
+  user-select: none;
+}
+
+/* identical to .app-root background + its ::before vignette, so the hand-off is seamless */
+.anugatha-splash__bg {
+  position: absolute;
+  inset: 0;
+  background: #080d12 url("../../assets/homepage/bg.png") center center / cover no-repeat fixed;
+}
+
+.anugatha-splash__bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 35%, rgba(220, 157, 74, 0.02) 0%, rgba(5, 10, 18, 0.2) 50%, rgba(5, 10, 18, 0.45) 100%);
+}
+
+/* must match .artifacts-orbit::before in App.css; positioned from the live orbit in layout() */
+.anugatha-splash__veil {
+  position: absolute;
+  display: none;
+  border-radius: 50%;
+  background: radial-gradient(circle closest-side,
+      rgba(4, 8, 11, 0.58) 0%,
+      rgba(4, 8, 11, 0.5) 45%,
+      rgba(4, 8, 11, 0.32) 66%,
+      rgba(4, 8, 11, 0.12) 84%,
+      rgba(4, 8, 11, 0) 100%);
+  pointer-events: none;
+}
+
+/* extra cinematic darkness, lifted before the hand-off */
+.anugatha-splash__dim {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(3, 6, 8, 0.35) 0%, rgba(3, 6, 8, 0.85) 75%);
+  opacity: 0.55;
+}
+
+.anugatha-splash__icon {
+  position: absolute;
+  left: 0;
+  top: 0;
+  object-fit: contain;
+  opacity: 0;
+  will-change: transform, opacity;
+  filter: none;
+  -webkit-user-drag: none;
+}
+
+.anugatha-splash__icons {
+  position: absolute;
+  inset: 0;
+  filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.8)) drop-shadow(0 0 14px rgba(214, 175, 102, 0.25));
+}
+
+.anugatha-splash__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.anugatha-splash__title {
+  position: absolute;
+  margin: 0;
+  text-align: center;
+  white-space: nowrap;
+  font-family: "Noto Serif Devanagari", serif;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  line-height: 0.95;
+  transform-origin: 50% 55%;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.anugatha-splash__title--main {
+  color: transparent;
+  background: linear-gradient(100deg, #c69d68, #eee0c6 50%, #a77b5b);
+  -webkit-background-clip: text;
+  background-clip: text;
+  will-change: transform, filter, opacity;
+}
+
+.anugatha-splash__title--glow {
+  color: #ffd28a;
+  filter: blur(18px);
+  mix-blend-mode: screen;
+}
+
+.anugatha-splash__black {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  pointer-events: none;
+}
+
+/* ---------------- Press-to-reveal gate (shown before the splash) ---------------- */
+.anugatha-gate {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: opacity 0.7s ease;
+}
+
+.anugatha-gate--leaving {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.anugatha-gate__bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(3, 6, 8, 0.25) 0%, rgba(3, 6, 8, 0.88) 70%),
+    #080d12 url("../../assets/homepage/bg.png") center center / cover no-repeat fixed;
+}
+
+.anugatha-gate__content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  animation: anugatha-gate-in 1.4s ease both;
+}
+
+.anugatha-gate__kicker {
+  margin: 0;
+  font-family: "DM Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: #8f7d5e;
+}
+
+.anugatha-gate__button {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  padding: 0;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  color: #e9d6ae;
+}
+
+.anugatha-gate__ring {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 1px solid rgba(214, 175, 102, 0.55);
+  box-shadow: 0 0 24px rgba(214, 175, 102, 0.25), inset 0 0 18px rgba(214, 175, 102, 0.15);
+  animation: anugatha-gate-breathe 2.6s ease-in-out infinite;
+}
+
+/* golden core */
+.anugatha-gate__ring::before {
+  content: "";
+  position: absolute;
+  inset: 26px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff3d6 0%, #f0c46e 45%, rgba(214, 160, 70, 0) 100%);
+  box-shadow: 0 0 18px 6px rgba(240, 196, 110, 0.55);
+}
+
+/* expanding ripple */
+.anugatha-gate__ring::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: 50%;
+  border: 1px solid rgba(214, 175, 102, 0.6);
+  animation: anugatha-gate-ripple 2.6s ease-out infinite;
+}
+
+.anugatha-gate__label {
+  font-family: "Cinzel", "DM Serif Display", Georgia, serif;
+  font-size: 14px;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  padding-left: 0.42em; /* balance trailing letter-spacing */
+  text-shadow: 0 0 14px rgba(240, 196, 110, 0.35);
+  animation: anugatha-gate-glow 2.6s ease-in-out infinite;
+}
+
+.anugatha-gate__button:hover .anugatha-gate__ring,
+.anugatha-gate__button:focus-visible .anugatha-gate__ring {
+  border-color: rgba(255, 216, 133, 0.9);
+  box-shadow: 0 0 34px rgba(240, 196, 110, 0.45), inset 0 0 22px rgba(214, 175, 102, 0.3);
+}
+
+.anugatha-gate__button:focus-visible {
+  outline: none;
+}
+
+.anugatha-gate__button:focus-visible .anugatha-gate__label {
+  color: #ffd885;
+}
+
+@keyframes anugatha-gate-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes anugatha-gate-breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+
+@keyframes anugatha-gate-ripple {
+  0% { transform: scale(1); opacity: 0.7; }
+  100% { transform: scale(2.1); opacity: 0; }
+}
+
+@keyframes anugatha-gate-glow {
+  0%, 100% { opacity: 0.75; }
+  50% { opacity: 1; }
+}
