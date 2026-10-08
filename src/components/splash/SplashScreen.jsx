@@ -48,16 +48,6 @@ const AUDIO_SRC = "/logo_audio/logo_reveal_audio.mp3";
 const AUDIO_BOOM_AT = 7.2;
 T.revealHit = T.revealStart + 0.15; // the moment the title starts emerging
 const AUDIO_OFFSET = AUDIO_BOOM_AT - T.revealHit; // audio position at splash t = 0
-// The soundtrack plays only once per browser: on the first press of the gate, never after.
-const AUDIO_PLAYED_KEY = "anugatha-audio-played";
-
-function audioAlreadyPlayed() {
-  try {
-    return Boolean(localStorage.getItem(AUDIO_PLAYED_KEY));
-  } catch {
-    return true; // storage blocked: cannot guarantee once-only, so stay silent
-  }
-}
 
 function shouldPlay() {
   if (typeof window === "undefined") return false;
@@ -134,7 +124,7 @@ export default function SplashScreen() {
     for (const icon of ICONS) decodeImage(icon.src);
     document.fonts?.load(`400 80px "Noto Serif Devanagari"`, TITLE).catch(() => {});
     gateBtnRef.current?.focus({ preventScroll: true });
-    if (!audioRef.current && !audioAlreadyPlayed()) {
+    if (!audioRef.current) {
       const audio = new Audio(AUDIO_SRC);
       audio.preload = "auto";
       audioRef.current = audio;
@@ -145,11 +135,6 @@ export default function SplashScreen() {
       // the splash re-aligns it to its own clock once the animation starts
       const audio = audioRef.current;
       if (audio) {
-        try {
-          localStorage.setItem(AUDIO_PLAYED_KEY, "1");
-        } catch {
-          // ignore
-        }
         audio.currentTime = AUDIO_OFFSET;
         audio.volume = 0;
         audio.play().catch(() => {});

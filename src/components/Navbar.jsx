@@ -40,7 +40,7 @@ export default function Navbar() {
 
   // Right shortcuts (swapped & balanced)
   const rightNavItems = [
-    { title: "Teams", path: "/teams" },
+    { title: "Team", path: "/teams" },
     { title: "Sponsors", path: "/sponsors" },
     { title: "Announcements", path: "/announcements" },
     { title: "Contact Us", path: "/contact" },
